@@ -39,13 +39,14 @@ namespace NeuralNetwork
 		#region -- Network Training --
 		private static void TrainNetwork()
 		{
-			Console.WriteLine("Now, we need some input data.");
 			PrintUnderline(50);
-			PrintNewLine(2);
+			Console.WriteLine("Now, we need some input data.");
+			PrintNewLine();
 
-			if (GetBool("Do you want to read from the space delimited data.txt file?"))
+			if (GetBool("Do you want to read from the space delimited data.txt file? (yes/no/exit)"))
 			{
 				_dataSets = ReadDataFromFile();
+				
 			}
 			else
 			{
@@ -55,16 +56,13 @@ namespace NeuralNetwork
 					var values = GetInputData(String.Format("Data Set {0}", i + 1));
 					var expectedResult = GetExpectedResult(String.Format("Expected Result for Data Set {0}:", i + 1));
 					_dataSets.Add(new DataSet(values, expectedResult));
-					PrintNewLine(2);
 				}
 			}
 
-			Console.WriteLine("Training...");
-			PrintUnderline(50);
 			PrintNewLine();
-
-			_network.Train(_dataSets);
 			PrintUnderline(50);
+			Console.WriteLine("Training...");
+			_network.Train(_dataSets);
 			PrintNewLine();
 			Console.WriteLine("Training Complete!");
 			PrintNewLine();
@@ -128,7 +126,7 @@ namespace NeuralNetwork
 			Console.WriteLine("We're going to create an artificial Neural Network!");
 			Console.WriteLine("The network will use back propagation to train itself.");
 			PrintUnderline(50);
-			PrintNewLine(2);
+			PrintNewLine();
 		}
 
 		private static void SetNumInputParameters()
@@ -222,6 +220,7 @@ namespace NeuralNetwork
 		{
 			Console.WriteLine("Creating Network...");
 			_network = new Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters, MaxEpochs);
+			PrintNewLine();
 		}
 		#endregion
 
@@ -275,7 +274,7 @@ namespace NeuralNetwork
 		{
 			for(var i = 0; i < numUnderlines; i++)
 				Console.Write('-');
-			Console.WriteLine();
+			PrintNewLine(2);
 		}
 		#endregion
 
