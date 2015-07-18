@@ -125,7 +125,7 @@ The Network and its supporting classes are self-contained, meaning that the "UI"
 I put this in with the future in mind.  There are Neural Networks in which some Hidden Neurons aren't mapped backwards, but are mapped forwards.  Having the layers will allow me to add this functionality faster in the future. 
 
 #### How do I Exit?
-I forgot that people sometimes want to close their applications via the command line.  When the program starts asking you for verify outputs, you can type "exit" to quit.  I'm a bit tired and will implement a better way to do this in the future. 
+I forgot that people sometimes want to close their applications via the command line.  When the program starts asking you to verify outputs, you can type "exit" to quit.  I'm a bit tired and will implement a better way to do this in the future. 
 
 #### You Code Funny...
 Hopefully my code is readable and and reusable for you.  I put a lot of effort into maintaining best practices and keeping true to the rules of "Low Coupling and High Cohesion".    It's a learning process and I welcome critique.  
