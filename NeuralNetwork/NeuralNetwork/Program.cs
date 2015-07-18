@@ -8,7 +8,7 @@ namespace NeuralNetwork
 	internal class Program
 	{
 		#region -- Constants --
-		private const int MaxEpoch = 5000;
+		private const int MaxEpochs = 5000;
 		#endregion
 
 		#region -- Variables --
@@ -206,7 +206,7 @@ namespace NeuralNetwork
 		private static void CreateNetwork()
 		{
 			Console.WriteLine("Creating Network...");
-			_network = new Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters, MaxEpoch);
+			_network = new Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters, MaxEpochs);
 		}
 		#endregion
 

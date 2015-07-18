@@ -65,9 +65,9 @@ namespace NeuralNetwork.Classes
 				foreach (var dataSet in dataSets)
 				{
 					//Input Initialization
-					for (var neuronIndex = 0; neuronIndex < InputLayer.Neurons.Count; neuronIndex++)
+					foreach (var neuron in InputLayer.Neurons)
 					{
-						InputLayer.Neurons[neuronIndex].Inputs[0] = dataSet.Values[neuronIndex];
+						neuron.Inputs[0] = dataSet.Values[InputLayer.Neurons.IndexOf(neuron)];
 					}
 
 					//Forward Propagation Through Hidden Layer
@@ -77,15 +77,14 @@ namespace NeuralNetwork.Classes
 					}
 
 					//Output Layer
-					for (var outputNeuronIndex = 0; outputNeuronIndex < OutputLayer.Neurons.Count; outputNeuronIndex++)
+					foreach (var neuron in OutputLayer.Neurons)
 					{
-						var outputNeuron = OutputLayer.Neurons[outputNeuronIndex];
-						outputNeuron.Inputs = HiddenLayer.Neurons.Select(x => x.Output).ToArray();
-						outputNeuron.Error = Sigmoid.Derivative(outputNeuron.Output) * (dataSet.Results[outputNeuronIndex] - outputNeuron.Output);
-						outputNeuron.AdjustWeights();
+						neuron.Inputs = HiddenLayer.Neurons.Select(x => x.Output).ToArray();
+						neuron.Error = Sigmoid.Derivative(neuron.Output) * (dataSet.Results[OutputLayer.Neurons.IndexOf(neuron)] - neuron.Output);
+						neuron.AdjustWeights();
 
 						//Back Propagation
-						BackPropagate(outputNeuron);
+						BackPropagate(neuron);
 					}
 				}
 
