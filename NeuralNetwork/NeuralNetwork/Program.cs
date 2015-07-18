@@ -85,6 +85,7 @@ namespace NeuralNetwork
 				var message = String.Format("Was the result supposed to be {0}? (y/n/exit)", String.Join(" ", results.Select(x => x > 0.5 ? "1" : "0")));
 				if (!GetBool(message))
 				{
+					PrintNewLine();
 					var expectedResults = GetExpectedResult("What were the expected results?");
 					_dataSets.Add(new DataSet(values, expectedResults));
 					PrintNewLine();
@@ -101,7 +102,6 @@ namespace NeuralNetwork
 					PrintNewLine();
 
 					_network.Train(_dataSets, false);
-					PrintNewLine();
 				}
 			}
 		}
