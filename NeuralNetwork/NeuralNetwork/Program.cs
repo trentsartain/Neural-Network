@@ -66,7 +66,7 @@ namespace NeuralNetwork
 				var convertedResults = new int[results.Length];
 				for (var i = 0; i < results.Length; i++) { convertedResults[i] = results[i] > 0.5 ? 1 : 0; }
 
-				var message = String.Format("Was the result supposed to be {0}? (y/n/exit)", String.Join(" ", convertedResults));
+				var message = String.Format("Was the result supposed to be {0}? (yes/no/exit)", String.Join(" ", convertedResults));
 				if (!GetBool(message))
 				{
 					var offendingDataSet = _dataSets.FirstOrDefault(x => x.Values.SequenceEqual(values) && x.Results.SequenceEqual(convertedResults));
@@ -315,7 +315,8 @@ namespace NeuralNetwork
 			Console.Write("Answer: ");
 			var line = Console.ReadLine();
 
-			while (line == null || (line.ToLower() != "y" && line.ToLower() != "n"))
+			bool answer;
+			while (line == null || !TryGetBoolResponse(line.ToLower(), out answer))
 			{
 				if (line == "exit")
 					Environment.Exit(0);
@@ -326,7 +327,28 @@ namespace NeuralNetwork
 			}
 
 			PrintNewLine();
-			return line.ToLower() == "y";
+			return answer;
+		}
+
+		private static bool TryGetBoolResponse(string line, out bool answer)
+		{
+			answer = false;
+			if (string.IsNullOrEmpty(line)) return false;
+
+			if (bool.TryParse(line, out answer)) return true;
+
+			if (line[0] == 'y')
+			{
+				answer = true;
+				return true;
+			}
+			if (line[0] == 'n')
+			{
+				answer = false;
+				return true;
+			}
+
+			return false;
 		}
 
 		private static void PrintNewLine(int numNewLines = 1)
