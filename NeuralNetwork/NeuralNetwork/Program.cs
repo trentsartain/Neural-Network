@@ -228,6 +228,67 @@ namespace NeuralNetwork
 		}
 		#endregion
 
+		#region -- I/O Help --
+		private static void SetupFromFile()
+		{
+			_dataSets = new List<DataSet>();
+			var fileContent = File.ReadAllText("data.txt");
+			var lines = fileContent.Split(new []{"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+
+			if (lines.Length < 2)
+			{
+				WriteError("There aren't enough lines in the file.  The first line should have 3 integers representing the number of inputs, the number of hidden neurons and the number of outputs." +
+				           "\r\nThere should also be at least one line of data.");
+			}
+			else
+			{
+				var setupParameters = lines[0].Split(' ');
+				if (setupParameters.Length != 3)
+					WriteError("There aren't enough setup parameters.");
+
+				if (!int.TryParse(setupParameters[0], out _numInputParameters) || !int.TryParse(setupParameters[1], out _numHiddenLayerNeurons) || !int.TryParse(setupParameters[2], out _numOutputParameters))
+					WriteError("The setup parameters are malformed.  There must be 3 integers.");
+
+				if (_numInputParameters < 2)
+					WriteError("The number of input parameters must be greater than or equal to 2.");
+
+				if (_numHiddenLayerNeurons < 2)
+					WriteError("The number of hidden neurons must be greater than or equal to 2.");
+
+				if (_numOutputParameters < 1)
+					WriteError("The number of hidden neurons must be greater than or equal to 1.");
+			}
+
+			for (var lineIndex = 1; lineIndex < lines.Length; lineIndex++)
+			{
+				var items = lines[lineIndex].Split(' ');
+				if (items.Length != _numInputParameters + _numOutputParameters)
+					WriteError(String.Format("The data file is malformed.  There were {0} elements on line {1} instead of {2}", items.Length, lineIndex + 1, _numInputParameters + _numOutputParameters));
+
+				var values = new double[_numInputParameters];
+				for (var i = 0; i < _numInputParameters; i++)
+				{
+					double num;
+					if (!double.TryParse(items[i], out num))
+						WriteError(String.Format("The data file is malformed.  On line {0}, input parameter {1} is not a valid number.", lineIndex + 1, items[i]));
+					else
+						values[i] = num;
+				}
+
+				var expectedResults = new int[_numOutputParameters];
+				for (var i = 0; i < _numOutputParameters; i++)
+				{
+					int num;
+					if (!int.TryParse(items[_numInputParameters + i], out num))
+						Console.WriteLine(String.Format("The data file is malformed.  On line {0}, output paramater {1} is not a valid number.", lineIndex, items[i]));
+					else
+						expectedResults[i] = num;
+				}
+				_dataSets.Add(new DataSet(values, expectedResults));
+			}
+		}
+		#endregion
+
 		#region -- Console Helpers --
 		private static int GetInput(string message, int min)
 		{
@@ -270,114 +331,22 @@ namespace NeuralNetwork
 
 		private static void PrintNewLine(int numNewLines = 1)
 		{
-			for(var i = 0; i < numNewLines; i++)
+			for (var i = 0; i < numNewLines; i++)
 				Console.WriteLine();
 		}
 
 		private static void PrintUnderline(int numUnderlines)
 		{
-			for(var i = 0; i < numUnderlines; i++)
+			for (var i = 0; i < numUnderlines; i++)
 				Console.Write('-');
 			PrintNewLine(2);
 		}
-		#endregion
 
-		#region -- I/O Help --
-		private static void SetupFromFile()
+		private static void WriteError(string error)
 		{
-			_dataSets = new List<DataSet>();
-			var fileContent = File.ReadAllText("data.txt");
-			var lines = fileContent.Split(new []{"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
-
-			if (lines.Length < 2)
-			{
-				Console.WriteLine("There aren't enough lines in the file.  The first line should have 3 integers representing the number of inputs, the number of hidden neurons and the number of outputs.");
-				Console.WriteLine("There should also be at least one line of data.");
-				Console.ReadLine();
-				Environment.Exit(0);
-			}
-			else
-			{
-				var setupParameters = lines[0].Split(' ');
-				if (setupParameters.Length != 3)
-				{
-					Console.WriteLine("There aren't enough setup parameters.");
-					Console.ReadLine();
-					Environment.Exit(0);
-				}
-
-				if (!int.TryParse(setupParameters[0], out _numInputParameters) || !int.TryParse(setupParameters[1], out _numHiddenLayerNeurons) || !int.TryParse(setupParameters[2], out _numOutputParameters))
-				{
-					Console.WriteLine("The setup parameters are malformed.  There must be 3 integers.");
-					Console.ReadLine();
-					Environment.Exit(0);
-				}
-
-				if (_numInputParameters < 2)
-				{
-					Console.WriteLine("The number of input parameters must be greater than or equal to 2.");
-					Console.ReadLine();
-					Environment.Exit(0);
-				}
-
-				if (_numHiddenLayerNeurons < 2)
-				{
-					Console.WriteLine("The number of hidden neurons must be greater than or equal to 2.");
-					Console.ReadLine();
-					Environment.Exit(0);
-				}
-
-				if (_numOutputParameters < 1)
-				{
-					Console.WriteLine("The number of hidden neurons must be greater than or equal to 1.");
-					Console.ReadLine();
-					Environment.Exit(0);
-				}
-			}
-
-			for (var lineIndex = 1; lineIndex < lines.Length; lineIndex++)
-			{
-				var items = lines[lineIndex].Split(' ');
-				if (items.Length != _numInputParameters + _numOutputParameters)
-				{
-					Console.WriteLine("The data file is malformed.  There were {0} elements on line {1} instead of {2}", items.Length, lineIndex + 1, _numInputParameters + _numOutputParameters);
-					Console.ReadLine();
-					Environment.Exit(0);
-				}
-
-				var values = new double[_numInputParameters];
-				for (var i = 0; i < _numInputParameters; i++)
-				{
-					double num;
-					if (!double.TryParse(items[i], out num))
-					{
-						Console.WriteLine("The data file is malformed.  On line {0}, input parameter {1} is not a valid number.", lineIndex + 1, items[i]);
-						Console.ReadLine();
-						Environment.Exit(0);
-					}
-					else
-					{
-						values[i] = num;
-					}
-				}
-
-				var expectedResults = new int[_numOutputParameters];
-				for (var i = 0; i < _numOutputParameters; i++)
-				{
-					int num;
-					if (!int.TryParse(items[_numInputParameters + i], out num))
-					{
-						Console.WriteLine("The data file is malformed.  On line {0}, output paramater {1} is not a valid number.", lineIndex, items[i]);
-						Console.ReadLine();
-						Environment.Exit(0);
-					}
-					else
-					{
-						expectedResults[i] = num;
-					}
-				}
-				_dataSets.Add(new DataSet(values, expectedResults));
-			}
+			Console.WriteLine(error);
+			Console.ReadLine();
+			Environment.Exit(0);
 		}
 		#endregion
 	}
