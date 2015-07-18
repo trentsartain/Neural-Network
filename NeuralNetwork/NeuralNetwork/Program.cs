@@ -16,6 +16,8 @@ namespace NeuralNetwork
 		private static int _numHiddenLayerNeurons;
 		private static int _numOutputParameters;
 		private static Network _network;
+		private static List<double[]> _dataSet;
+		private static List<int[]> _expectedResults; 
 		#endregion
 
 		#region -- Main --
@@ -38,35 +40,71 @@ namespace NeuralNetwork
 		private static void TrainNetwork()
 		{
 			Console.WriteLine("Now, we need some input data.");
-			PrintUnderline(30);
+			PrintUnderline(50);
 			PrintNewLine(2);
 
-			var dataSet = new List<double[]>();
-			var expectedResults =new List<int[]>();
+			_dataSet = new List<double[]>();
+			_expectedResults =new List<int[]>();
 
 			for (var i = 0; i < 4; i++)
 			{
-				dataSet.Add(GetInputData(String.Format("Data Set {0}", i + 1)));
-				expectedResults.Add(GetExpectedResult(i));
+				_dataSet.Add(GetInputData(String.Format("Data Set {0}", i + 1)));
+				_expectedResults.Add(GetExpectedResult(String.Format("Expected Result for Data Set {0}:", i + 1)));
 				PrintNewLine(2);
 			}
 
-			_network.Train(dataSet, expectedResults);
-			PrintNewLine(2);
-			Console.WriteLine("The network is trained!");
+			Console.WriteLine("Training...");
+			PrintUnderline(50);
+			PrintNewLine();
+
+			_network.Train(_dataSet, _expectedResults);
+			PrintUnderline(50);
+			PrintNewLine();
+			Console.WriteLine("Training Complete!");
 			PrintNewLine();
 		}
 
 		private static void VerifyTraining()
 		{
 			Console.WriteLine("Let's test it!");
-			var inputs = GetInputData(String.Format("Give me {0} inputs: ", _numInputParameters));
+			PrintNewLine();
 
-			var results = _network.GetResult(inputs);
-
-			foreach (var result in results)
+			while (true)
 			{
-				Console.WriteLine("Output: {0}", result);
+				PrintUnderline(50);
+				var inputs = GetInputData(String.Format("Type {0} inputs: ", _numInputParameters));
+				var results = _network.GetResult(inputs);
+				PrintNewLine();
+
+				foreach (var result in results)
+				{
+					Console.WriteLine("Output: {0}", result);
+				}
+
+				PrintNewLine();
+
+				var message = String.Format("Was the result supposed to be {0}? (y/n/exit)", String.Join(" ", results.Select(x => x > 0.5 ? "1" : "0")));
+				if (!GetBool(message))
+				{
+					var result = GetExpectedResult("What were the expected results?");
+					_dataSet.Add(inputs);
+					_expectedResults.Add(result);
+					PrintNewLine();
+					Console.WriteLine("Retraining Network...");
+					PrintNewLine();
+
+					_network.Train(_dataSet, _expectedResults, false);
+				}
+				else
+				{
+					PrintNewLine();
+					Console.WriteLine("Neat!");
+					Console.WriteLine("Encouraging Network...");
+					PrintNewLine();
+
+					_network.Train(_dataSet, _expectedResults, false);
+					PrintNewLine();
+				}
 			}
 		}
 		#endregion
@@ -76,27 +114,27 @@ namespace NeuralNetwork
 		{
 			Console.WriteLine("We're going to create an artificial Neural Network!");
 			Console.WriteLine("The network will use back propagation to train itself.");
-			PrintUnderline(75);
+			PrintUnderline(50);
 			PrintNewLine(2);
 		}
 
 		private static void SetNumInputParameters()
 		{
-			Console.WriteLine("How many input parameters will there be?");
+			Console.WriteLine("How many input parameters will there be? (2 or more)");
 			_numInputParameters = GetInput("Input Parameters: ", 2);
 			PrintNewLine(2);
 		}
 
 		private static void SetNumNeuronsInHiddenLayer()
 		{
-			Console.WriteLine("How many neurons in the hidden layer?");
+			Console.WriteLine("How many neurons in the hidden layer? (2 or more)");
 			_numHiddenLayerNeurons = GetInput("Neurons: ", 2);
 			PrintNewLine(2);
 		}
 
 		private static void SetNumOutputParameters()
 		{
-			Console.WriteLine("How many output parameters will there be?");
+			Console.WriteLine("How many output parameters will there be? (1 or more)");
 			_numOutputParameters = GetInput("Output Parameters: ", 1);
 			PrintNewLine(2);
 		}
@@ -134,16 +172,16 @@ namespace NeuralNetwork
 			return values;
 		}
 
-		private static int[] GetExpectedResult(int inputDataNumber)
+		private static int[] GetExpectedResult(string message)
 		{
-			Console.WriteLine("Expected Result for Data Set {0}:", inputDataNumber + 1);
+			Console.WriteLine(message);
 			var line = Console.ReadLine();
 
 			while (line == null || line.Split(' ').Count() != _numOutputParameters)
 			{
 				Console.WriteLine("{0} outputs are required.", _numOutputParameters);
 				PrintNewLine();
-				Console.WriteLine("Expected Result for Data Set {0}:", inputDataNumber + 1);
+				Console.WriteLine(message);
 				line = Console.ReadLine();
 			}
 
@@ -160,7 +198,7 @@ namespace NeuralNetwork
 				{
 					Console.WriteLine("You must enter 1s and 0s!");
 					PrintNewLine(2);
-					return GetExpectedResult(inputDataNumber);
+					return GetExpectedResult(message);
 				}
 			}
 
@@ -178,21 +216,40 @@ namespace NeuralNetwork
 		private static int GetInput(string message, int min)
 		{
 			Console.Write(message);
-			var num = GetNumberFromConsole();
+			var num = GetNumber();
 
 			while (num < min)
 			{
 				Console.Write(message);
-				num = GetNumberFromConsole();
+				num = GetNumber();
 			}
 
 			return num;
 		}
 
-		private static int GetNumberFromConsole()
+		private static int GetNumber()
 		{
 			int num;
 			return int.TryParse(Console.ReadLine(), out num) ? num : 0;
+		}
+
+		private static bool GetBool(string message)
+		{
+			Console.WriteLine(message);
+			Console.Write("Answer: ");
+			var line = Console.ReadLine();
+
+			while (line == null || (line.ToLower() != "y" && line.ToLower() != "n"))
+			{
+				if (line == "exit")
+					Environment.Exit(0);
+
+				Console.WriteLine(message);
+				Console.Write("Answer: ");
+				line = Console.ReadLine();
+			}
+
+			return line.ToLower() == "y";
 		}
 
 		private static void PrintNewLine(int numNewLines = 1)
@@ -205,6 +262,7 @@ namespace NeuralNetwork
 		{
 			for(var i = 0; i < numUnderlines; i++)
 				Console.Write('-');
+			Console.WriteLine();
 		}
 		#endregion
 	}

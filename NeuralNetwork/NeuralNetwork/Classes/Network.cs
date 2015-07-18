@@ -46,13 +46,13 @@ namespace NeuralNetwork.Classes
 		#endregion
 
 		#region -- Training --
-		public void Train(List<double[]> dataSet, List<int[]> expectedResults)
+		public void Train(List<double[]> dataSet, List<int[]> expectedResults, bool verbose = true)
 		{
 			var epoch = 0;
 			var errorInterval = MaxEpochs / 10;
 			while (epoch < MaxEpochs)
 			{
-				if (epoch % errorInterval == 0 && epoch < MaxEpochs && epoch > 0)
+				if (verbose && (epoch % errorInterval == 0 && epoch < MaxEpochs && epoch > 0))
 				{
 					Console.WriteLine("Epoch {0}:", epoch);
 					for (var i = 0; i < OutputLayer.Neurons.Count; i++)
@@ -62,7 +62,7 @@ namespace NeuralNetwork.Classes
 					Console.WriteLine();
 				}
 
-				for (var dataSetIndex = 0; dataSetIndex < 4; dataSetIndex++)
+				for (var dataSetIndex = 0; dataSetIndex < dataSet.Count; dataSetIndex++)
 				{
 					//Input Initialization
 					for (var neuronIndex = 0; neuronIndex < InputLayer.Neurons.Count; neuronIndex++)
