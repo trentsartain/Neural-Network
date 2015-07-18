@@ -46,7 +46,7 @@ namespace NeuralNetwork.Classes
 		#endregion
 
 		#region -- Training --
-		public void Train(List<double[]> dataSet, List<int[]> expectedResults, bool verbose = true)
+		public void Train(List<DataSet> dataSets, bool verbose = true)
 		{
 			var epoch = 0;
 			var errorInterval = MaxEpochs / 10;
@@ -62,12 +62,12 @@ namespace NeuralNetwork.Classes
 					Console.WriteLine();
 				}
 
-				for (var dataSetIndex = 0; dataSetIndex < dataSet.Count; dataSetIndex++)
+				foreach (var dataSet in dataSets)
 				{
 					//Input Initialization
 					for (var neuronIndex = 0; neuronIndex < InputLayer.Neurons.Count; neuronIndex++)
 					{
-						InputLayer.Neurons[neuronIndex].Inputs[0] = dataSet[dataSetIndex][neuronIndex];
+						InputLayer.Neurons[neuronIndex].Inputs[0] = dataSet.Values[neuronIndex];
 					}
 
 					//Forward Propagation Through Hidden Layer
@@ -81,7 +81,7 @@ namespace NeuralNetwork.Classes
 					{
 						var outputNeuron = OutputLayer.Neurons[outputNeuronIndex];
 						outputNeuron.Inputs = HiddenLayer.Neurons.Select(x => x.Output).ToArray();
-						outputNeuron.Error = Sigmoid.Derivative(outputNeuron.Output) * (expectedResults[dataSetIndex][outputNeuronIndex] - outputNeuron.Output);
+						outputNeuron.Error = Sigmoid.Derivative(outputNeuron.Output) * (dataSet.Results[outputNeuronIndex] - outputNeuron.Output);
 						outputNeuron.AdjustWeights();
 
 						//Back Propagation

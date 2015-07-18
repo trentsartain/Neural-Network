@@ -8,7 +8,7 @@ namespace NeuralNetwork
 	internal class Program
 	{
 		#region -- Constants --
-		private const int MaxEpoch = 2000;
+		private const int MaxEpoch = 5000;
 		#endregion
 
 		#region -- Variables --
@@ -16,8 +16,7 @@ namespace NeuralNetwork
 		private static int _numHiddenLayerNeurons;
 		private static int _numOutputParameters;
 		private static Network _network;
-		private static List<double[]> _dataSet;
-		private static List<int[]> _expectedResults; 
+		private static List<DataSet> _dataSets; 
 		#endregion
 
 		#region -- Main --
@@ -43,13 +42,13 @@ namespace NeuralNetwork
 			PrintUnderline(50);
 			PrintNewLine(2);
 
-			_dataSet = new List<double[]>();
-			_expectedResults =new List<int[]>();
+			_dataSets = new List<DataSet>();
 
 			for (var i = 0; i < 4; i++)
 			{
-				_dataSet.Add(GetInputData(String.Format("Data Set {0}", i + 1)));
-				_expectedResults.Add(GetExpectedResult(String.Format("Expected Result for Data Set {0}:", i + 1)));
+				var values = GetInputData(String.Format("Data Set {0}", i + 1));
+				var expectedResult = GetExpectedResult(String.Format("Expected Result for Data Set {0}:", i + 1));
+				_dataSets.Add(new DataSet(values, expectedResult));
 				PrintNewLine(2);
 			}
 
@@ -57,7 +56,7 @@ namespace NeuralNetwork
 			PrintUnderline(50);
 			PrintNewLine();
 
-			_network.Train(_dataSet, _expectedResults);
+			_network.Train(_dataSets);
 			PrintUnderline(50);
 			PrintNewLine();
 			Console.WriteLine("Training Complete!");
@@ -72,8 +71,8 @@ namespace NeuralNetwork
 			while (true)
 			{
 				PrintUnderline(50);
-				var inputs = GetInputData(String.Format("Type {0} inputs: ", _numInputParameters));
-				var results = _network.GetResult(inputs);
+				var values = GetInputData(String.Format("Type {0} inputs: ", _numInputParameters));
+				var results = _network.GetResult(values);
 				PrintNewLine();
 
 				foreach (var result in results)
@@ -86,14 +85,13 @@ namespace NeuralNetwork
 				var message = String.Format("Was the result supposed to be {0}? (y/n/exit)", String.Join(" ", results.Select(x => x > 0.5 ? "1" : "0")));
 				if (!GetBool(message))
 				{
-					var result = GetExpectedResult("What were the expected results?");
-					_dataSet.Add(inputs);
-					_expectedResults.Add(result);
+					var expectedResults = GetExpectedResult("What were the expected results?");
+					_dataSets.Add(new DataSet(values, expectedResults));
 					PrintNewLine();
 					Console.WriteLine("Retraining Network...");
 					PrintNewLine();
 
-					_network.Train(_dataSet, _expectedResults, false);
+					_network.Train(_dataSets, false);
 				}
 				else
 				{
@@ -102,7 +100,7 @@ namespace NeuralNetwork
 					Console.WriteLine("Encouraging Network...");
 					PrintNewLine();
 
-					_network.Train(_dataSet, _expectedResults, false);
+					_network.Train(_dataSets, false);
 					PrintNewLine();
 				}
 			}

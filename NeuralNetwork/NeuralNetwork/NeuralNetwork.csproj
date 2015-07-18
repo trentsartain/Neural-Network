@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Dataset.cs" />
     <Compile Include="Classes\Layer.cs" />
     <Compile Include="Classes\Network.cs" />
     <Compile Include="Classes\Neuron.cs" />
