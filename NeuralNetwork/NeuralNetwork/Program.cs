@@ -72,7 +72,6 @@ namespace NeuralNetwork
 					var offendingDataSet = _dataSets.FirstOrDefault(x => x.Values.SequenceEqual(values) && x.Results.SequenceEqual(convertedResults));
 					_dataSets.Remove(offendingDataSet);
 
-					PrintNewLine();
 					var expectedResults = GetExpectedResult("What were the expected results?");
 					if(!_dataSets.Exists(x => x.Values.SequenceEqual(values) && x.Results.SequenceEqual(expectedResults)))
 						_dataSets.Add(new DataSet(values, expectedResults));
@@ -326,6 +325,7 @@ namespace NeuralNetwork
 				line = Console.ReadLine();
 			}
 
+			PrintNewLine();
 			return line.ToLower() == "y";
 		}
 
