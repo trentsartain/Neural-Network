@@ -85,7 +85,8 @@ When it starts, you will be presented with the option to load the Neural Network
 * Number of Outputs: 1
 
 Test Data:
-| Input A | Input B | Output  |
+
+| Input A | Input B | Output |
 |:-----:|:---------:|:-----:|
 | 0 | 0 | 0 |
 | 0 | 1 | 1 |
