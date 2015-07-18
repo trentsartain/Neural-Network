@@ -82,12 +82,19 @@ namespace NeuralNetwork
 
 				PrintNewLine();
 
-				var message = String.Format("Was the result supposed to be {0}? (y/n/exit)", String.Join(" ", results.Select(x => x > 0.5 ? "1" : "0")));
+				var convertedResults = new int[results.Length];
+				for (var i = 0; i < results.Length; i++) { convertedResults[i] = results[i] > 0.5 ? 1 : 0; }
+
+				var message = String.Format("Was the result supposed to be {0}? (y/n/exit)", String.Join(" ", convertedResults));
 				if (!GetBool(message))
 				{
+					var offendingDataSet = _dataSets.FirstOrDefault(x => x.Values.SequenceEqual(values) && x.Results.SequenceEqual(convertedResults));
+					_dataSets.Remove(offendingDataSet);
+
 					PrintNewLine();
 					var expectedResults = GetExpectedResult("What were the expected results?");
 					_dataSets.Add(new DataSet(values, expectedResults));
+
 					PrintNewLine();
 					Console.WriteLine("Retraining Network...");
 					PrintNewLine();
