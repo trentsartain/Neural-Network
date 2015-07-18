@@ -8,6 +8,7 @@ This project is my first attempt at creating an application that allows for quic
 
 This project is written in C#. 
 
+![Alt text](ScreenShot.PNG?raw=true "Optional Title")
 What is a Neural Network?
 -----
 Great question!  
