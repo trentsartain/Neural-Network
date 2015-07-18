@@ -27,8 +27,6 @@ namespace NeuralNetwork
 			SetupNetwork();
 			TrainNetwork();
 			VerifyTraining();
-
-			Console.ReadLine();
 		}
 		#endregion
 
@@ -38,7 +36,9 @@ namespace NeuralNetwork
 			PrintNewLine();
 			PrintUnderline(50);
 			Console.WriteLine("Training...");
+
 			_network.Train(_dataSets);
+
 			PrintNewLine();
 			Console.WriteLine("Training Complete!");
 			PrintNewLine();
