@@ -43,14 +43,13 @@ namespace NeuralNetwork
 			PrintUnderline(50);
 			PrintNewLine(2);
 
-			_dataSets = new List<DataSet>();
-
 			if (GetBool("Do you want to read from the space delimited data.txt file?"))
 			{
 				_dataSets = ReadDataFromFile();
 			}
 			else
 			{
+				_dataSets = new List<DataSet>();
 				for (var i = 0; i < 4; i++)
 				{
 					var values = GetInputData(String.Format("Data Set {0}", i + 1));
