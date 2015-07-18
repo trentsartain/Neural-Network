@@ -24,11 +24,7 @@ namespace NeuralNetwork
 		private static void Main()
 		{
 			Greet();
-			SetNumInputParameters();
-			SetNumNeuronsInHiddenLayer();
-			SetNumOutputParameters();
-
-			CreateNetwork();
+			SetupNetwork();
 			TrainNetwork();
 			VerifyTraining();
 
@@ -39,26 +35,6 @@ namespace NeuralNetwork
 		#region -- Network Training --
 		private static void TrainNetwork()
 		{
-			PrintUnderline(50);
-			Console.WriteLine("Now, we need some input data.");
-			PrintNewLine();
-
-			if (GetBool("Do you want to read from the space delimited data.txt file? (yes/no/exit)"))
-			{
-				_dataSets = ReadDataFromFile();
-				
-			}
-			else
-			{
-				_dataSets = new List<DataSet>();
-				for (var i = 0; i < 4; i++)
-				{
-					var values = GetInputData(String.Format("Data Set {0}", i + 1));
-					var expectedResult = GetExpectedResult(String.Format("Expected Result for Data Set {0}:", i + 1));
-					_dataSets.Add(new DataSet(values, expectedResult));
-				}
-			}
-
 			PrintNewLine();
 			PrintUnderline(50);
 			Console.WriteLine("Training...");
@@ -129,8 +105,28 @@ namespace NeuralNetwork
 			PrintNewLine();
 		}
 
+		private static void SetupNetwork()
+		{
+			if (GetBool("Do you want to read from the space delimited data.txt file? (yes/no/exit)"))
+			{
+				SetupFromFile();
+			}
+			else
+			{
+				SetNumInputParameters();
+				SetNumNeuronsInHiddenLayer();
+				SetNumOutputParameters();
+				GetTrainingData();
+			}
+
+			Console.WriteLine("Creating Network...");
+			_network = new Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters, MaxEpochs);
+			PrintNewLine();
+		}
+
 		private static void SetNumInputParameters()
 		{
+			PrintNewLine();
 			Console.WriteLine("How many input parameters will there be? (2 or more)");
 			_numInputParameters = GetInput("Input Parameters: ", 2);
 			PrintNewLine(2);
@@ -148,6 +144,21 @@ namespace NeuralNetwork
 			Console.WriteLine("How many output parameters will there be? (1 or more)");
 			_numOutputParameters = GetInput("Output Parameters: ", 1);
 			PrintNewLine(2);
+		}
+
+		private static void GetTrainingData()
+		{
+			PrintUnderline(50);
+			Console.WriteLine("Now, we need some input data.");
+			PrintNewLine();
+
+			_dataSets = new List<DataSet>();
+			for (var i = 0; i < 4; i++)
+			{
+				var values = GetInputData(String.Format("Data Set {0}", i + 1));
+				var expectedResult = GetExpectedResult(String.Format("Expected Result for Data Set {0}:", i + 1));
+				_dataSets.Add(new DataSet(values, expectedResult));
+			}
 		}
 
 		private static double[] GetInputData(string message)
@@ -215,13 +226,6 @@ namespace NeuralNetwork
 
 			return values;
 		}
-
-		private static void CreateNetwork()
-		{
-			Console.WriteLine("Creating Network...");
-			_network = new Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters, MaxEpochs);
-			PrintNewLine();
-		}
 		#endregion
 
 		#region -- Console Helpers --
@@ -279,13 +283,59 @@ namespace NeuralNetwork
 		#endregion
 
 		#region -- I/O Help --
-		private static List<DataSet> ReadDataFromFile()
+		private static void SetupFromFile()
 		{
-			var dataSets = new List<DataSet>();
+			_dataSets = new List<DataSet>();
 			var fileContent = File.ReadAllText("data.txt");
 			var lines = fileContent.Split(new []{"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
 
-			for (var lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+			if (lines.Length < 2)
+			{
+				Console.WriteLine("There aren't enough lines in the file.  The first line should have 3 integers representing the number of inputs, the number of hidden neurons and the number of outputs.");
+				Console.WriteLine("There should also be at least one line of data.");
+				Console.ReadLine();
+				Environment.Exit(0);
+			}
+			else
+			{
+				var setupParameters = lines[0].Split(' ');
+				if (setupParameters.Length != 3)
+				{
+					Console.WriteLine("There aren't enough setup parameters.");
+					Console.ReadLine();
+					Environment.Exit(0);
+				}
+
+				if (!int.TryParse(setupParameters[0], out _numInputParameters) || !int.TryParse(setupParameters[1], out _numHiddenLayerNeurons) || !int.TryParse(setupParameters[2], out _numOutputParameters))
+				{
+					Console.WriteLine("The setup parameters are malformed.  There must be 3 integers.");
+					Console.ReadLine();
+					Environment.Exit(0);
+				}
+
+				if (_numInputParameters < 2)
+				{
+					Console.WriteLine("The number of input parameters must be greater than or equal to 2.");
+					Console.ReadLine();
+					Environment.Exit(0);
+				}
+
+				if (_numHiddenLayerNeurons < 2)
+				{
+					Console.WriteLine("The number of hidden neurons must be greater than or equal to 2.");
+					Console.ReadLine();
+					Environment.Exit(0);
+				}
+
+				if (_numOutputParameters < 1)
+				{
+					Console.WriteLine("The number of hidden neurons must be greater than or equal to 1.");
+					Console.ReadLine();
+					Environment.Exit(0);
+				}
+			}
+
+			for (var lineIndex = 1; lineIndex < lines.Length; lineIndex++)
 			{
 				var items = lines[lineIndex].Split(' ');
 				if (items.Length != _numInputParameters + _numOutputParameters)
@@ -326,9 +376,8 @@ namespace NeuralNetwork
 						expectedResults[i] = num;
 					}
 				}
-				dataSets.Add(new DataSet(values, expectedResults));
+				_dataSets.Add(new DataSet(values, expectedResults));
 			}
-			return dataSets;
 		}
 		#endregion
 	}
