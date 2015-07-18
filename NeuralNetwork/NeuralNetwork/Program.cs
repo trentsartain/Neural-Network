@@ -93,13 +93,14 @@ namespace NeuralNetwork
 
 					PrintNewLine();
 					var expectedResults = GetExpectedResult("What were the expected results?");
-					_dataSets.Add(new DataSet(values, expectedResults));
+					if(!_dataSets.Exists(x => x.Values.SequenceEqual(values) && x.Results.SequenceEqual(expectedResults)))
+						_dataSets.Add(new DataSet(values, expectedResults));
 
 					PrintNewLine();
 					Console.WriteLine("Retraining Network...");
 					PrintNewLine();
 
-					_network.Train(_dataSets, false);
+					_network.Train(_dataSets);
 				}
 				else
 				{
@@ -108,7 +109,7 @@ namespace NeuralNetwork
 					Console.WriteLine("Encouraging Network...");
 					PrintNewLine();
 
-					_network.Train(_dataSets, false);
+					_network.Train(_dataSets);
 				}
 			}
 		}
