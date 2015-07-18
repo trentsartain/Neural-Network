@@ -106,7 +106,7 @@ namespace NeuralNetwork
 			Console.WriteLine(message);
 			var line = Console.ReadLine();
 
-			while (line == null || line.Split(' ').Count() < _numInputParameters)
+			while (line == null || line.Split(' ').Count() != _numInputParameters)
 			{
 				Console.WriteLine("{0} inputs are required.", _numInputParameters);
 				PrintNewLine();
@@ -139,7 +139,7 @@ namespace NeuralNetwork
 			Console.WriteLine("Expected Result for Data Set {0}:", inputDataNumber + 1);
 			var line = Console.ReadLine();
 
-			while (line == null || line.Split(' ').Count() < _numOutputParameters)
+			while (line == null || line.Split(' ').Count() != _numOutputParameters)
 			{
 				Console.WriteLine("{0} outputs are required.", _numOutputParameters);
 				PrintNewLine();
