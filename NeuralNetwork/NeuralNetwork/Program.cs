@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NeuralNetwork.Classes;
 
@@ -44,12 +45,19 @@ namespace NeuralNetwork
 
 			_dataSets = new List<DataSet>();
 
-			for (var i = 0; i < 4; i++)
+			if (GetBool("Do you want to read from the space delimited data.txt file?"))
 			{
-				var values = GetInputData(String.Format("Data Set {0}", i + 1));
-				var expectedResult = GetExpectedResult(String.Format("Expected Result for Data Set {0}:", i + 1));
-				_dataSets.Add(new DataSet(values, expectedResult));
-				PrintNewLine(2);
+				_dataSets = ReadDataFromFile();
+			}
+			else
+			{
+				for (var i = 0; i < 4; i++)
+				{
+					var values = GetInputData(String.Format("Data Set {0}", i + 1));
+					var expectedResult = GetExpectedResult(String.Format("Expected Result for Data Set {0}:", i + 1));
+					_dataSets.Add(new DataSet(values, expectedResult));
+					PrintNewLine(2);
+				}
 			}
 
 			Console.WriteLine("Training...");
@@ -269,6 +277,60 @@ namespace NeuralNetwork
 			for(var i = 0; i < numUnderlines; i++)
 				Console.Write('-');
 			Console.WriteLine();
+		}
+		#endregion
+
+		#region -- I/O Help --
+		private static List<DataSet> ReadDataFromFile()
+		{
+			var dataSets = new List<DataSet>();
+			var fileContent = File.ReadAllText("data.txt");
+			var lines = fileContent.Split(new []{"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+
+			for (var lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+			{
+				var items = lines[lineIndex].Split(' ');
+				if (items.Length != _numInputParameters + _numOutputParameters)
+				{
+					Console.WriteLine("The data file is malformed.  There were {0} elements on line {1} instead of {2}", items.Length, lineIndex, _numInputParameters + _numOutputParameters);
+					Console.ReadLine();
+					Environment.Exit(0);
+				}
+
+				var values = new double[_numInputParameters];
+				for (var i = 0; i < _numInputParameters; i++)
+				{
+					double num;
+					if (!double.TryParse(items[i], out num))
+					{
+						Console.WriteLine("The data file is malformed.  On line {0}, input parameter {1} is not a valid number.", lineIndex, items[i]);
+						Console.ReadLine();
+						Environment.Exit(0);
+					}
+					else
+					{
+						values[i] = num;
+					}
+				}
+
+				var expectedResults = new int[_numOutputParameters];
+				for (var i = 0; i < _numOutputParameters; i++)
+				{
+					int num;
+					if (!int.TryParse(items[_numInputParameters + i], out num))
+					{
+						Console.WriteLine("The data file is malformed.  On line {0}, output paramater {1} is not a valid number.", lineIndex, items[i]);
+						Console.ReadLine();
+						Environment.Exit(0);
+					}
+					else
+					{
+						expectedResults[i] = num;
+					}
+				}
+				dataSets.Add(new DataSet(values, expectedResults));
+			}
+			return dataSets;
 		}
 		#endregion
 	}
