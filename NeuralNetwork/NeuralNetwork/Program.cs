@@ -291,7 +291,7 @@ namespace NeuralNetwork
 				var items = lines[lineIndex].Split(' ');
 				if (items.Length != _numInputParameters + _numOutputParameters)
 				{
-					Console.WriteLine("The data file is malformed.  There were {0} elements on line {1} instead of {2}", items.Length, lineIndex, _numInputParameters + _numOutputParameters);
+					Console.WriteLine("The data file is malformed.  There were {0} elements on line {1} instead of {2}", items.Length, lineIndex + 1, _numInputParameters + _numOutputParameters);
 					Console.ReadLine();
 					Environment.Exit(0);
 				}
@@ -302,7 +302,7 @@ namespace NeuralNetwork
 					double num;
 					if (!double.TryParse(items[i], out num))
 					{
-						Console.WriteLine("The data file is malformed.  On line {0}, input parameter {1} is not a valid number.", lineIndex, items[i]);
+						Console.WriteLine("The data file is malformed.  On line {0}, input parameter {1} is not a valid number.", lineIndex + 1, items[i]);
 						Console.ReadLine();
 						Environment.Exit(0);
 					}
