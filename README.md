@@ -61,10 +61,10 @@ The job of the Neural Network is to try and figure out that pattern.  It does th
 Training the Neural Network is accomplished by giving it a set of input data and the expected results for those inputs.  This data is then continuously run through the Neural Network until we can be reasonably sure that it has a grasp of the patterns present in that data. 
 
 In this project, the Neural Network is trained via two very common Neural Network training methods:
-1. Backpropagation
+1. Back-Propagation
 	* After each set of inputs is run through the system and an output generated, that output is validated against the expected output.  
 	* The percentage of error that results is then propagated backwards (hence the name) through the Hidden Layers of the Neural Network.  This adjusts the weights assigned to each Neuron in the Hidden Layers.  
-	* Ideally, each Backpropagation will bring the Neural Network's output closer to the expected output of the provided inputs.
+	* Ideally, each Back-Propagation will bring the Neural Network's output closer to the expected output of the provided inputs.
 2. Biases
 	* Biases allow us to modify our activation function (discussed below) in order to generate a better output for each neuron.  
 	* [See Here](http://stackoverflow.com/questions/2480650/role-of-bias-in-neural-networks) for an excellent explanation as to what a bias does for a Neural Network.  
@@ -142,7 +142,7 @@ I used a few resources while building this project.  I'm super thankful for thos
 
 [C# Backpropagation Tutorial](http://www.codingvision.net/miscellaneous/c-backpropagation-tutorial-xor) - This was the initial C# project I looked at.  I took and modified a few elements that I really liked such as the Sigmoid and Neuron classes. 
 
-[A Step by Step Backpropagation Example](http://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/) - This was an excellent explanation of Backpropagation and helped me tremendously with some of the math involved. 
+[A Step by Step Backpropagation Example](http://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/) - This was an excellent explanation of Back-Propagation and helped me tremendously with some of the math involved. 
 
 [Coding Neural Network Back-Propagation Using C#](https://visualstudiomagazine.com/Articles/2015/04/01/Back-Propagation-Using-C.aspx?Page=1) - This was another great C# example.  Dr. James McCaffrey (the author) has a lot of great insights in this article and others that he has written on the subject. 
 
