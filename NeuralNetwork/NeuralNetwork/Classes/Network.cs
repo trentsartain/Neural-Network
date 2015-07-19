@@ -49,7 +49,7 @@ namespace NeuralNetwork.Classes
 		public void Train(List<DataSet> dataSets)
 		{
 			if(!ValidateDataSets(dataSets))
-				throw new Exception("The DataSet is invalid for this network.");
+				throw new Exception("The data set is invalid for this network.");
 
 			var epoch = 0;
 			while (epoch < MaxEpochs)
@@ -98,6 +98,9 @@ namespace NeuralNetwork.Classes
 		#region -- Use --
 		public double[] GetResult(double[] dataSet)
 		{
+			if(dataSet.Length != InputLayer.Neurons.Count)
+				throw new Exception("This data set is invalid for this network.");
+
 			var results = new double[OutputLayer.Neurons.Count];
 
 			//Prime Input Neurons
