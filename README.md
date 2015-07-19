@@ -29,6 +29,7 @@ Building off of [this excellent article from 2013](http://www.codingvision.net/m
 | true | true | false |
 
 Considering this, let's break down a Neural Network into its three basic parts:
+
 1. The Inputs
 	* These are the inputs into the Neural Network.  From the XOR example above, the inputs would be Input A and Input B.
 	* Each input can be considered a Neuron whose output is the initial input value. 
@@ -61,6 +62,7 @@ The job of the Neural Network is to try and figure out that pattern.  It does th
 Training the Neural Network is accomplished by giving it a set of input data and the expected results for those inputs.  This data is then continuously run through the Neural Network until we can be reasonably sure that it has a grasp of the patterns present in that data. 
 
 In this project, the Neural Network is trained via two very common Neural Network training methods:
+
 1. Back-Propagation
 	* After each set of inputs is run through the system and an output generated, that output is validated against the expected output.  
 	* The percentage of error that results is then propagated backwards (hence the name) through the Hidden Layers of the Neural Network.  This adjusts the weights assigned to each Neuron in the Hidden Layers.  
@@ -95,6 +97,7 @@ Test Data:
 | 1 | 1 | 0 |
 
 To change the file (data.txt):
+
 1. Make the first line as follows: {{number of inputs}} {{number of hidden neurons}} {{number of outputs}}
 2. Add any number of lines representing your data.  Simply put in your inputs (space delmited) followed by your expected outputs (space delimited).
 
@@ -145,7 +148,3 @@ I used a few resources while building this project.  I'm super thankful for thos
 [A Step by Step Backpropagation Example](http://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/) - This was an excellent explanation of Back-Propagation and helped me tremendously with some of the math involved. 
 
 [Coding Neural Network Back-Propagation Using C#](https://visualstudiomagazine.com/Articles/2015/04/01/Back-Propagation-Using-C.aspx?Page=1) - This was another great C# example.  Dr. James McCaffrey (the author) has a lot of great insights in this article and others that he has written on the subject. 
-
-
-
-
