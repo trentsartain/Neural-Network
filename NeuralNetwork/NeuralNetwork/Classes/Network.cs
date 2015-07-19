@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NeuralNetwork.Classes
@@ -47,6 +48,9 @@ namespace NeuralNetwork.Classes
 		#region -- Training --
 		public void Train(List<DataSet> dataSets)
 		{
+			if(!ValidateDataSets(dataSets))
+				throw new Exception("The DataSet is invalid for this network.");
+
 			var epoch = 0;
 			while (epoch < MaxEpochs)
 			{
@@ -116,6 +120,19 @@ namespace NeuralNetwork.Classes
 			}
 
 			return results;
+		}
+		#endregion
+
+		#region -- Helpers --
+		private bool ValidateDataSets(IEnumerable<DataSet> dataSets)
+		{
+			foreach (var dataSet in dataSets)
+			{
+				if (dataSet.Values.Length != InputLayer.Neurons.Count) return false;
+				if (dataSet.Results.Length != OutputLayer.Neurons.Count) return false;
+			}
+
+			return true;
 		}
 		#endregion
 	}
