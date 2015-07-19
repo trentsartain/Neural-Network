@@ -52,6 +52,7 @@ Because I love examples, here's another:
 | true | true | true | true |
 
 In the above table, we can infer the following patterns:
+
 1. The output is true if the number of inputs set to true is odd OR the number of inputs set to false is even.
 2. The output is false if the number of inputs set to true is even OR the number of inputs set to false is odd.
 
