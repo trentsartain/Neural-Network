@@ -13,7 +13,7 @@ What is a Neural Network?
 -----
 Great question!  
 
-A Neural Network can be thought of as an artificial representation of a brain.  A Neural Network is made up of nodes (or neurons) that are interconnected, much like they are in the brain.  The network can have any number (N) of inputs and any number (M) of outputs.  In between the inputs and outputs are a series of "hidden" neurons that make up the hidden layers of the network.  These hidden layers provide the meat of the network and allow for some of the neat functionalities we can get out of a Neural Network.
+A Neural Network can be thought of as a series of nodes (or neurons) that are interconnected, much like they are in the brain.  The network can have any number (N) of inputs and any number (M) of outputs.  In between the inputs and outputs are a series of "hidden" neurons that make up the hidden layers of the network.  These hidden layers provide the meat of the network and allow for some of the neat functionalities we can get out of a Neural Network.
 
 What are the Parts of a Neural Network?
 --------
