@@ -163,14 +163,14 @@ namespace NeuralNetwork
 		private static double[] GetInputData(string message)
 		{
 			Console.WriteLine(message);
-			var line = Console.ReadLine();
+			var line = GetLine();
 
 			while (line == null || line.Split(' ').Count() != _numInputParameters)
 			{
 				Console.WriteLine("{0} inputs are required.", _numInputParameters);
 				PrintNewLine();
 				Console.WriteLine(message);
-				line = Console.ReadLine();
+				line = GetLine();
 			}
 
 			var values = new double[_numInputParameters];
@@ -196,14 +196,14 @@ namespace NeuralNetwork
 		private static int[] GetExpectedResult(string message)
 		{
 			Console.WriteLine(message);
-			var line = Console.ReadLine();
+			var line = GetLine();
 
 			while (line == null || line.Split(' ').Count() != _numOutputParameters)
 			{
 				Console.WriteLine("{0} outputs are required.", _numOutputParameters);
 				PrintNewLine();
 				Console.WriteLine(message);
-				line = Console.ReadLine();
+				line = GetLine();
 			}
 
 			var values = new int[_numOutputParameters];
@@ -289,6 +289,13 @@ namespace NeuralNetwork
 		#endregion
 
 		#region -- Console Helpers --
+
+		private static string GetLine()
+		{
+			var line = Console.ReadLine();
+			return line == null ? string.Empty : line.Trim();
+		}
+
 		private static int GetInput(string message, int min)
 		{
 			Console.Write(message);
@@ -306,14 +313,15 @@ namespace NeuralNetwork
 		private static int GetNumber()
 		{
 			int num;
-			return int.TryParse(Console.ReadLine(), out num) ? num : 0;
+			var line = GetLine();
+			return line != null && int.TryParse(line, out num) ? num : 0;
 		}
 
 		private static bool GetBool(string message)
 		{
 			Console.WriteLine(message);
 			Console.Write("Answer: ");
-			var line = Console.ReadLine();
+			var line = GetLine();
 
 			bool answer;
 			while (line == null || !TryGetBoolResponse(line.ToLower(), out answer))
@@ -323,7 +331,7 @@ namespace NeuralNetwork
 
 				Console.WriteLine(message);
 				Console.Write("Answer: ");
-				line = Console.ReadLine();
+				line = GetLine();
 			}
 
 			PrintNewLine();

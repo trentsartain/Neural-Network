@@ -96,9 +96,9 @@ namespace NeuralNetwork.Classes
 		#endregion
 
 		#region -- Use --
-		public double[] GetResult(double[] dataSet)
+		public double[] GetResult(double[] inputs)
 		{
-			if(dataSet.Length != InputLayer.Neurons.Count)
+			if (inputs.Length != InputLayer.Neurons.Count)
 				throw new Exception("This data set is invalid for this network.");
 
 			var results = new double[OutputLayer.Neurons.Count];
@@ -106,7 +106,7 @@ namespace NeuralNetwork.Classes
 			//Prime Input Neurons
 			foreach (var neuron in InputLayer.Neurons)
 			{
-				neuron.Inputs[0] = dataSet[InputLayer.Neurons.IndexOf(neuron)];
+				neuron.Inputs[0] = inputs[InputLayer.Neurons.IndexOf(neuron)];
 			}
 
 			//Propagate Forward
