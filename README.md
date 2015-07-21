@@ -34,9 +34,9 @@ Considering this, let's break down a Neural Network into its three basic parts:
 	* These are the inputs into the Neural Network.  From the XOR example above, the inputs would be Input A and Input B.
 	* Each input can be considered a Neuron whose output is the initial input value. 
 2. The Hidden Layers
-	* This is the meat of the Neural Network.  This is where the magic happens.  The Neurons in this layer are assigned weights.  These weights start off fairly random, but as the network is "trained" (discussed below), the weights are adjusted in order to make the Neural Network's output closer to the expected result.
+	* This is the meat of the Neural Network.  This is where the magic happens.  The Neurons in this layer are assigned weights for each of their inputs.  These weights start off fairly random, but as the network is "trained" (discussed below), the weights are adjusted in order to make the neuron's output, and therefore the Neural Network's output closer to the expected result.
 3. The Outputs
-	* These are the outputs from the system. From the XOR example above, the output from the system would be either 'true' or 'false'.  In the Neural Network, the Outputs are the last line of Neurons.  These Neurons are also assigned a weight and are "fed" by the Neurons in the hidden layer.  
+	* These are the outputs from the system. From the XOR example above, the output from the system would be either 'true' or 'false'.  In the Neural Network, the Outputs are the last line of Neurons.  These Neurons are also assigned a weight for each of their inputs and are "fed" by the Neurons in the hidden layer.  
 
 Using the XOR example, if we were to give our Neural Network the inputs 'true' and 'false' we would expect the system to return 'true'. 
 
@@ -66,7 +66,7 @@ In this project, the Neural Network is trained via two very common Neural Networ
 
 1. Back-Propagation
 	* After each set of inputs is run through the system and an output generated, that output is validated against the expected output.  
-	* The percentage of error that results is then propagated backwards (hence the name) through the Hidden Layers of the Neural Network.  This adjusts the weights assigned to each Neuron in the Hidden Layers.  
+	* The percentage of error that results is then propagated backwards (hence the name) through the Hidden Layers of the Neural Network.  This adjusts the weights assigned to each of a neuron's inputs in the Hidden Layers.  
 	* Ideally, each Back-Propagation will bring the Neural Network's output closer to the expected output of the provided inputs.
 2. Biases
 	* Biases allow us to modify our activation function (discussed below) in order to generate a better output for each neuron.  
