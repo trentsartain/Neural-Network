@@ -232,7 +232,7 @@ namespace NeuralNetwork
 		{
 			_dataSets = new List<DataSet>();
 			var fileContent = File.ReadAllText("data.txt");
-			var lines = fileContent.Split(new []{"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+			var lines = fileContent.Split(new []{Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
 
 			if (lines.Length < 2)
 			{
