@@ -345,15 +345,13 @@ namespace NeuralNetwork
 
 			if (bool.TryParse(line, out answer)) return true;
 
-			if (line[0] == 'y')
+			switch (line[0])
 			{
-				answer = true;
-				return true;
-			}
-			if (line[0] == 'n')
-			{
-				answer = false;
-				return true;
+				case 'y':
+					answer = true;
+					return true;
+				case 'n':
+					return true;
 			}
 
 			return false;
