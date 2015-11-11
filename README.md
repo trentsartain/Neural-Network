@@ -121,15 +121,13 @@ This is the Neural Network attempting to get as close as possible to the expecte
 What's Next?
 -----
 
-I'm going to continue learning more about Neural Networks.  This program represents my Saturday of research and coding.  My understanding of Neural Networks is FAR from complete and I still feel unknowledgeable in many areas.  
-
-For the program, I will continue adding bells and whistles such as other training methods.  I'm going to add 'momentum' very soon and will explain what that does here. I would also like to find a way to adequately represent the Neural Network and its weights after it has been trained.  I know I have done a woeful job of explaining that part and I feel that a reprentation of the network throughout the training process would be immensely helpful.
+I'm going to continue learning more about Neural Networks.  My understanding of Neural Networks is FAR from complete and I still feel unknowledgeable in many areas.  As I learn about new methods and research, I will consider adding them either to the network or as a sidenote in the readme. 
 
 I have another repository set up to use this same network to learn image recognition. [That can be found here.](http://github.com/trentsartain/Neural-Network-Image-Recognition)
 
 Code Considerations
 ---
-Feel free to use any part of this program.  
+Feel free to reuse any part of this program.  
 
 #### Reusability
 The Network and its supporting classes are self-contained, meaning that the "UI" portion of the program only serves to gather the necessary information to instantiate the Network class and its supporting classes.  You could theoretically take the Network and supporting classes and bring it into your own application with little to no modification. The network only requires the number of inputs, number of hidden neurons, the number of outputs and the max number of epochs to be instantiated. 
