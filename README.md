@@ -110,7 +110,7 @@ To change the file (data.txt):
 
 Alternatively, you can manually type in your own manual configuration and data sets.  There is a fair amount of validation in place to guide you through the process.
 
-Once the data sets are...set... the program will begin training the Neural Network.  Currently, the program is set to train the network for 5000 epochs (iterations).  This is a bit of overkill.  Feel free to alter this value via the constant in the program. 
+Once the data sets are...set... the program will begin training the Neural Network.  The network can be trained by number of epochs or by setting a minimum error.  All of this can be set via the constants in the program.  If minimum error is used, the network will be trained until the error threshold is reached.  If the error threshold can't be reached, the training will stop when the number of epochs run reaches the maximum integer value. 
 
 After the Neural Network is trained, you will be asked to enter input data and verify the output.  If the output is wrong, you can enter the correct output.  The network will then be "retrained".  If the input is correct, the network will be "encouraged".  
 
