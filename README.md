@@ -62,7 +62,7 @@ The job of the Neural Network is to try and figure out that pattern.  It does th
 
 Training the Neural Network is accomplished by giving it a set of input data and the expected results for those inputs.  This data is then continuously run through the Neural Network until we can be reasonably sure that it has a grasp of the patterns present in that data. 
 
-In this project, the Neural Network is trained via two very common Neural Network training methods:
+In this project, the Neural Network is trained via the following common Neural Network training methods:
 
 1. Back-Propagation
 	* After each set of inputs is run through the system and an output generated, that output is validated against the expected output.  
@@ -71,6 +71,12 @@ In this project, the Neural Network is trained via two very common Neural Networ
 2. Biases
 	* Biases allow us to modify our activation function (discussed below) in order to generate a better output for each neuron.  
 	* [See Here](http://stackoverflow.com/questions/2480650/role-of-bias-in-neural-networks) for an excellent explanation as to what a bias does for a Neural Network.  
+3. Momentum
+	* Used to prevent the system from converging to a local minimum. 
+	* [See Here](https://en.wikibooks.org/wiki/Artificial_Neural_Networks/Neural_Network_Basics#Momentum)
+4. Learning Rate
+	* This will change the overall learning speed of the system.  
+	* [See Here](https://en.wikibooks.org/wiki/Artificial_Neural_Networks/Neural_Network_Basics#Learning_Rate)
 
 #### What defines a Neuron's Output?
 
@@ -119,7 +125,7 @@ I'm going to continue learning more about Neural Networks.  This program represe
 
 For the program, I will continue adding bells and whistles such as other training methods.  I'm going to add 'momentum' very soon and will explain what that does here. I would also like to find a way to adequately represent the Neural Network and its weights after it has been trained.  I know I have done a woeful job of explaining that part and I feel that a reprentation of the network throughout the training process would be immensely helpful.
 
-I have another repository set up for porting this to iOS.  I'm hoping to make a nice graphical representation of a network before, during and after training on an iOS device. [That can be found here.](http://github.com/trentsartain/Neural-Network-iOS)
+I have another repository set up to use this same network to learn image recognition. [That can be found here.](http://github.com/trentsartain/Neural-Network-Image-Recognition)
 
 Code Considerations
 ---
@@ -127,9 +133,6 @@ Feel free to use any part of this program.
 
 #### Reusability
 The Network and its supporting classes are self-contained, meaning that the "UI" portion of the program only serves to gather the necessary information to instantiate the Network class and its supporting classes.  You could theoretically take the Network and supporting classes and bring it into your own application with little to no modification. The network only requires the number of inputs, number of hidden neurons, the number of outputs and the max number of epochs to be instantiated. 
-
-#### What's With the Useless 'Layer' class?
-I put this in with the future in mind.  There are Neural Networks in which some Hidden Neurons aren't mapped backwards, but are mapped forwards.  Having the layers will allow me to add this functionality faster in the future. 
 
 #### How do I Exit?
 I forgot that people sometimes want to close their applications via the command line.  When the program starts asking you to verify outputs, you can type "exit" to quit.  I'm a bit tired and will implement a better way to do this in the future. 
@@ -151,3 +154,5 @@ I used a few resources while building this project.  I'm super thankful for thos
 [A Step by Step Backpropagation Example](http://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/) - This was an excellent explanation of Back-Propagation and helped me tremendously with some of the math involved. 
 
 [Coding Neural Network Back-Propagation Using C#](https://visualstudiomagazine.com/Articles/2015/04/01/Back-Propagation-Using-C.aspx?Page=1) - This was another great C# example.  Dr. James McCaffrey (the author) has a lot of great insights in this article and others that he has written on the subject. 
+
+[Simple C# Artificial Neural Network](http://www.craigsprogramming.com/2014/01/simple-c-artificial-neural-network.html) - This article played a large role in the November 2015 refactoring.  This convinced me to get rid of the layer class altogether and helped clean up the network training code.  
