@@ -9,7 +9,9 @@ namespace NeuralNetwork
 	internal class Program
 	{
 		#region -- Constants --
-		private const int MaxEpochs = 1000;
+		private const int MaxEpochs = 5000;
+		private const double MinimumError = 0.01;
+		private const TrainingType TrainingType = Classes.TrainingType.MinimumError;
 		#endregion
 
 		#region -- Variables --
@@ -37,7 +39,7 @@ namespace NeuralNetwork
 			PrintUnderline(50);
 			Console.WriteLine("Training...");
 
-		    _network.Train(_dataSets, MaxEpochs);
+			Train();
 
 			PrintNewLine();
 			Console.WriteLine("Training Complete!");
@@ -80,7 +82,7 @@ namespace NeuralNetwork
 					Console.WriteLine("Retraining Network...");
 					PrintNewLine();
 
-                    _network.Train(_dataSets, MaxEpochs);
+					Train();
 				}
 				else
 				{
@@ -89,9 +91,14 @@ namespace NeuralNetwork
 					Console.WriteLine("Encouraging Network...");
 					PrintNewLine();
 
-                    _network.Train(_dataSets, MaxEpochs);
+					Train();
 				}
 			}
+		}
+
+		private static void Train()
+		{
+			_network.Train(_dataSets, TrainingType == TrainingType.Epoch ? MaxEpochs : MinimumError);
 		}
 		#endregion
 

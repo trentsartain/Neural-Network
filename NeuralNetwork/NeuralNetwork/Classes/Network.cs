@@ -6,14 +6,17 @@ namespace NeuralNetwork.Classes
 {
     public class Network
     {
-        #region -- Properties --
-        public double LearnRate { get; set; }
-        public double Momentum { get; set; }
-        public List<Neuron> InputLayer { get; set; }
-        public List<Neuron> HiddenLayer { get; set; }
-        public List<Neuron> OutputLayer { get; set; }
-        private static readonly Random Random = new Random();
-        #endregion
+		#region -- Properties --
+		public double LearnRate { get; set; }
+		public double Momentum { get; set; }
+		public List<Neuron> InputLayer { get; set; }
+		public List<Neuron> HiddenLayer { get; set; }
+		public List<Neuron> OutputLayer { get; set; }
+		#endregion
+
+		#region -- Globals --
+		private static readonly Random Random = new Random();
+		#endregion
 
         #region -- Constructor --
         public Network(int inputSize, int hiddenSize, int outputSize, double? learnRate = null, double? momentum = null)
@@ -47,6 +50,25 @@ namespace NeuralNetwork.Classes
                 }
             }
         }
+
+		public void Train(List<DataSet> dataSets, double minimumError)
+		{
+			var error = 1.0;
+			var numEpochs = 0;
+
+			while (error > minimumError && numEpochs < int.MaxValue)
+			{
+				var errors = new List<double>();
+				foreach (var dataSet in dataSets)
+				{
+					ForwardPropagate(dataSet.Values);
+					BackPropagate(dataSet.Targets);
+					errors.Add(CalculateError(dataSet.Targets));
+				}
+				error = errors.Average();
+				numEpochs++;
+			}
+		}
 
         public void ForwardPropagate(params double[] inputs)
         {
@@ -85,4 +107,12 @@ namespace NeuralNetwork.Classes
         }
         #endregion
     }
+
+	#region -- Enum --
+	public enum TrainingType
+	{
+		Epoch,
+		MinimumError
+	}
+	#endregion
 }
