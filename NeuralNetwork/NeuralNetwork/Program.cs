@@ -9,7 +9,7 @@ namespace NeuralNetwork
 	internal class Program
 	{
 		#region -- Constants --
-		private const int MaxEpochs = 5000;
+		private const int MaxEpochs = 1000;
 		#endregion
 
 		#region -- Variables --
@@ -37,7 +37,7 @@ namespace NeuralNetwork
 			PrintUnderline(50);
 			Console.WriteLine("Training...");
 
-			_network.Train(_dataSets);
+		    _network.Train(_dataSets, MaxEpochs);
 
 			PrintNewLine();
 			Console.WriteLine("Training Complete!");
@@ -52,8 +52,8 @@ namespace NeuralNetwork
 			while (true)
 			{
 				PrintUnderline(50);
-				var values = GetInputData(String.Format("Type {0} inputs: ", _numInputParameters));
-				var results = _network.GetResult(values);
+				var values = GetInputData(string.Format("Type {0} inputs: ", _numInputParameters));
+				var results = _network.Compute(values);
 				PrintNewLine();
 
 				foreach (var result in results)
@@ -63,24 +63,24 @@ namespace NeuralNetwork
 
 				PrintNewLine();
 
-				var convertedResults = new int[results.Length];
+				var convertedResults = new double[results.Length];
 				for (var i = 0; i < results.Length; i++) { convertedResults[i] = results[i] > 0.5 ? 1 : 0; }
 
-				var message = String.Format("Was the result supposed to be {0}? (yes/no/exit)", String.Join(" ", convertedResults));
+				var message = string.Format("Was the result supposed to be {0}? (yes/no/exit)", String.Join(" ", convertedResults));
 				if (!GetBool(message))
 				{
-					var offendingDataSet = _dataSets.FirstOrDefault(x => x.Values.SequenceEqual(values) && x.Results.SequenceEqual(convertedResults));
+					var offendingDataSet = _dataSets.FirstOrDefault(x => x.Values.SequenceEqual(values) && x.Targets.SequenceEqual(convertedResults));
 					_dataSets.Remove(offendingDataSet);
 
 					var expectedResults = GetExpectedResult("What were the expected results?");
-					if(!_dataSets.Exists(x => x.Values.SequenceEqual(values) && x.Results.SequenceEqual(expectedResults)))
+					if(!_dataSets.Exists(x => x.Values.SequenceEqual(values) && x.Targets.SequenceEqual(expectedResults)))
 						_dataSets.Add(new DataSet(values, expectedResults));
 
 					PrintNewLine();
 					Console.WriteLine("Retraining Network...");
 					PrintNewLine();
 
-					_network.Train(_dataSets);
+                    _network.Train(_dataSets, MaxEpochs);
 				}
 				else
 				{
@@ -89,7 +89,7 @@ namespace NeuralNetwork
 					Console.WriteLine("Encouraging Network...");
 					PrintNewLine();
 
-					_network.Train(_dataSets);
+                    _network.Train(_dataSets, MaxEpochs);
 				}
 			}
 		}
@@ -119,7 +119,7 @@ namespace NeuralNetwork
 			}
 
 			Console.WriteLine("Creating Network...");
-			_network = new Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters, MaxEpochs);
+			_network = new Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters);
 			PrintNewLine();
 		}
 
@@ -193,7 +193,7 @@ namespace NeuralNetwork
 			return values;
 		}
 
-		private static int[] GetExpectedResult(string message)
+		private static double[] GetExpectedResult(string message)
 		{
 			Console.WriteLine(message);
 			var line = GetLine();
@@ -206,7 +206,7 @@ namespace NeuralNetwork
 				line = GetLine();
 			}
 
-			var values = new int[_numOutputParameters];
+			var values = new double[_numOutputParameters];
 			var lineNums = line.Split(' ');
 			for (var i = 0; i < lineNums.Length; i++)
 			{
@@ -274,12 +274,12 @@ namespace NeuralNetwork
 						values[i] = num;
 				}
 
-				var expectedResults = new int[_numOutputParameters];
+				var expectedResults = new double[_numOutputParameters];
 				for (var i = 0; i < _numOutputParameters; i++)
 				{
 					int num;
 					if (!int.TryParse(items[_numInputParameters + i], out num))
-						Console.WriteLine(String.Format("The data file is malformed.  On line {0}, output paramater {1} is not a valid number.", lineIndex, items[i]));
+						Console.WriteLine("The data file is malformed.  On line {0}, output paramater {1} is not a valid number.", lineIndex, items[i]);
 					else
 						expectedResults[i] = num;
 				}

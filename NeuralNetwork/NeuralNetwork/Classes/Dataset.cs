@@ -1,14 +1,18 @@
 ﻿namespace NeuralNetwork.Classes
 {
-	public class DataSet
+    public class DataSet
 	{
+		#region -- Properties --
 		public double[] Values { get; set; }
-		public int[] Results { get; set; }
+        public double[] Targets { get; set; }
+		#endregion
 
-		public DataSet(double[] values, int[] results)
-		{
-			Values = values;
-			Results = results;
+		#region -- Constructor --
+		public DataSet(double[] values, double[] targets)
+        {
+            Values = values;
+            Targets = targets;
 		}
+		#endregion
 	}
 }

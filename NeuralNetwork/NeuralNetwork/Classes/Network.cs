@@ -4,139 +4,85 @@ using System.Linq;
 
 namespace NeuralNetwork.Classes
 {
-	public class Network
-	{
-		#region -- Properties --
-		private Layer InputLayer { get; set; }
-		private Layer HiddenLayer { get; set; }
-		private Layer OutputLayer { get; set; }
-		private int MaxEpochs { get; set; }
-		#endregion
+    public class Network
+    {
+        #region -- Properties --
+        public double LearnRate { get; set; }
+        public double Momentum { get; set; }
+        public List<Neuron> InputLayer { get; set; }
+        public List<Neuron> HiddenLayer { get; set; }
+        public List<Neuron> OutputLayer { get; set; }
+        private static readonly Random Random = new Random();
+        #endregion
 
-		#region -- Constructor --
-		public Network(int numInputParameters, int numNeuronsInHiddenLayer, int numOutputParameters, int maxEpochs)
-		{
-			InputLayer = new Layer();
-			HiddenLayer = new Layer();
-			OutputLayer = new Layer();
-			MaxEpochs = maxEpochs;
+        #region -- Constructor --
+        public Network(int inputSize, int hiddenSize, int outputSize, double? learnRate = null, double? momentum = null)
+        {
+            LearnRate = learnRate ?? .9;
+            Momentum = momentum ?? .06;
+            InputLayer = new List<Neuron>();
+            HiddenLayer = new List<Neuron>();
+            OutputLayer = new List<Neuron>();
 
-			//Setup Input Layer
-			for (var i = 0; i < numInputParameters; i++)
-			{
-				InputLayer.Neurons.Add(new Neuron(1, true));
-			}
+            for (var i = 0; i < inputSize; i++)
+                InputLayer.Add(new Neuron());
 
-			//Setup Hidden Layer
-			for (var i = 0; i < numNeuronsInHiddenLayer; i++)
-			{
-				var neuron = new Neuron(numInputParameters);
-				neuron.RandomizeWeights();
-				HiddenLayer.Neurons.Add(neuron);
-			}
+            for (var i = 0; i < hiddenSize; i++)
+                HiddenLayer.Add(new Neuron(InputLayer));
 
-			//Setup Output Layer
-			for (var i = 0; i < numOutputParameters; i++)
-			{
-				var neuron = new Neuron(HiddenLayer.Neurons.Count);
-				neuron.RandomizeWeights();
-				OutputLayer.Neurons.Add(neuron);
-			}
-		}
-		#endregion
+            for (var i = 0; i < outputSize; i++)
+                OutputLayer.Add(new Neuron(HiddenLayer));
+        }
+        #endregion
 
-		#region -- Training --
-		public void Train(List<DataSet> dataSets)
-		{
-			if(!ValidateDataSets(dataSets))
-				throw new Exception("The data set is invalid for this network.");
+        #region -- Training --
+        public void Train(List<DataSet> dataSets, int numEpochs)
+        {
+            for (var i = 0; i < numEpochs; i++)
+            {
+                foreach (var dataSet in dataSets)
+                {
+                    ForwardPropagate(dataSet.Values);
+                    BackPropagate(dataSet.Targets);
+                }
+            }
+        }
 
-			var epoch = 0;
-			while (epoch < MaxEpochs)
-			{
-				foreach (var dataSet in dataSets)
-				{
-					//Input Initialization
-					foreach (var neuron in InputLayer.Neurons)
-					{
-						neuron.Inputs[0] = dataSet.Values[InputLayer.Neurons.IndexOf(neuron)];
-					}
+        public void ForwardPropagate(params double[] inputs)
+        {
+            var i = 0;
+            InputLayer.ForEach(a => a.Value = inputs[i++]);
+            HiddenLayer.ForEach(a => a.CalculateValue());
+            OutputLayer.ForEach(a => a.CalculateValue());
+        }
 
-					//Forward Propagation Through Hidden Layer
-					foreach (var neuron in HiddenLayer.Neurons)
-					{
-						neuron.Inputs = InputLayer.Neurons.Select(x => x.Output).ToArray();
-					}
+        public void BackPropagate(params double[] targets)
+        {
+            var i = 0;
+            OutputLayer.ForEach(a => a.CalculateGradient(targets[i++]));
+            HiddenLayer.ForEach(a => a.CalculateGradient());
+            HiddenLayer.ForEach(a => a.UpdateWeights(LearnRate, Momentum));
+            OutputLayer.ForEach(a => a.UpdateWeights(LearnRate, Momentum));
+        }
 
-					//Output Layer
-					foreach (var neuron in OutputLayer.Neurons)
-					{
-						neuron.Inputs = HiddenLayer.Neurons.Select(x => x.Output).ToArray();
-						neuron.Error = Sigmoid.Derivative(neuron.Output) * (dataSet.Results[OutputLayer.Neurons.IndexOf(neuron)] - neuron.Output);
-						neuron.AdjustWeights();
+        public double[] Compute(params double[] inputs)
+        {
+            ForwardPropagate(inputs);
+            return OutputLayer.Select(a => a.Value).ToArray();
+        }
 
-						//Back Propagation
-						BackPropagate(neuron);
-					}
-				}
+        public double CalculateError(params double[] targets)
+        {
+            var i = 0;
+            return OutputLayer.Sum(a => Math.Abs(a.CalculateError(targets[i++])));
+        }
+        #endregion
 
-				epoch++;
-			}
-		}
-
-		private void BackPropagate(Neuron outputNeuron)
-		{
-			for (var neuronIndex = 0; neuronIndex < HiddenLayer.Neurons.Count; neuronIndex++)
-			{
-				var neuron = HiddenLayer.Neurons[neuronIndex];
-				neuron.Error = Sigmoid.Derivative(neuron.Output) * outputNeuron.Error * outputNeuron.Weights[neuronIndex];
-				neuron.AdjustWeights();
-			}
-		}
-		#endregion
-
-		#region -- Use --
-		public double[] GetResult(double[] inputs)
-		{
-			if (inputs.Length != InputLayer.Neurons.Count)
-				throw new Exception("This data set is invalid for this network.");
-
-			var results = new double[OutputLayer.Neurons.Count];
-
-			//Prime Input Neurons
-			foreach (var neuron in InputLayer.Neurons)
-			{
-				neuron.Inputs[0] = inputs[InputLayer.Neurons.IndexOf(neuron)];
-			}
-
-			//Propagate Forward
-			foreach (var neuron in HiddenLayer.Neurons)
-			{
-				neuron.Inputs = InputLayer.Neurons.Select(x => x.Output).ToArray();
-			}
-
-			//Get Output Neuron Outputs
-			foreach (var neuron in OutputLayer.Neurons)
-			{
-				neuron.Inputs = HiddenLayer.Neurons.Select(x => x.Output).ToArray();
-				results[OutputLayer.Neurons.IndexOf(neuron)] = neuron.Output;
-			}
-
-			return results;
-		}
-		#endregion
-
-		#region -- Helpers --
-		private bool ValidateDataSets(IEnumerable<DataSet> dataSets)
-		{
-			foreach (var dataSet in dataSets)
-			{
-				if (dataSet.Values.Length != InputLayer.Neurons.Count) return false;
-				if (dataSet.Results.Length != OutputLayer.Neurons.Count) return false;
-			}
-
-			return true;
-		}
-		#endregion
-	}
+        #region -- Helpers --
+        public static double GetRandom()
+        {
+            return 2 * Random.NextDouble() - 1;
+        }
+        #endregion
+    }
 }

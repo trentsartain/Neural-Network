@@ -1,59 +1,69 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace NeuralNetwork.Classes
 {
-	public class Neuron
-	{
-		#region -- Properties --
-		private double BiasWeight { get; set; }
-		private bool IsInput { get; set; }
-		public double[] Inputs { get; set; }
-		public double[] Weights { get; set; }
-		public double Error { get; set; }
+    public class Neuron
+    {
+        #region -- Properties --
+        public List<Synapse> InputSynapses { get; set; }
+        public List<Synapse> OutputSynapses { get; set; }
+        public double Bias { get; set; }
+        public double BiasDelta { get; set; }
+        public double Gradient { get; set; }
+        public double Value { get; set; }
+        #endregion
 
-		public double Output
-		{
-			get
-			{
-				if (IsInput) return Inputs[0];
+		#region -- Constructors --
+		public Neuron()
+        {
+            InputSynapses = new List<Synapse>();
+            OutputSynapses = new List<Synapse>();
+            Bias = Network.GetRandom();
+        }
 
-				var num = Weights.Select((t, i) => t * Inputs[i]).Sum();
-				return Sigmoid.Output(num + BiasWeight);
-			}
-		}
+        public Neuron(IEnumerable<Neuron> inputNeurons) : this()
+        {
+            foreach (var inputNeuron in inputNeurons)
+            {
+                var synapse = new Synapse(inputNeuron, this);
+                inputNeuron.OutputSynapses.Add(synapse);
+                InputSynapses.Add(synapse);
+            }
+        }
 		#endregion
 
-		#region -- Variables --
-		private readonly Random _r = new Random();
-		#endregion
+		#region -- Values & Weights --
+		public virtual double CalculateValue()
+        {
+            return Value = Sigmoid.Output(InputSynapses.Sum(a => a.Weight * a.InputNeuron.Value) + Bias);
+        }
 
-		#region -- Constructor --
-		public Neuron(int numInputs, bool isInput = false)
-		{
-			Inputs = new double[numInputs];
-			Weights = new double[numInputs];
+        public double CalculateError(double target)
+        {
+            return target - Value;
+        }
 
-			if (isInput)
-			{
-				IsInput = true;
-				BiasWeight = 0;
-				Weights[0] = 1;
-			}
-		}
-		#endregion
+        public double CalculateGradient(double? target = null)
+        {
+            if(target == null)
+                return Gradient = OutputSynapses.Sum(a => a.OutputNeuron.Gradient * a.Weight) * Sigmoid.Derivative(Value);
 
-		#region -- Adjustments --
-		public void RandomizeWeights()
-		{
-			for (var i = 0; i < Weights.Length; i++) { Weights[i] = _r.NextDouble(); }
-			BiasWeight = _r.NextDouble();
-		}
+            return Gradient = CalculateError(target.Value) * Sigmoid.Derivative(Value);
+        }
 
-		public void AdjustWeights()
-		{
-			for (var i = 0; i < Weights.Length; i++) { Weights[i] += Error*Inputs[i]; }
-			BiasWeight += Error;
+        public void UpdateWeights(double learnRate, double momentum)
+        {
+            var prevDelta = BiasDelta;
+            BiasDelta = learnRate * Gradient;
+            Bias += BiasDelta + momentum * prevDelta;
+
+            foreach (var synapse in InputSynapses)
+            {
+                prevDelta = synapse.WeightDelta;
+                synapse.WeightDelta = learnRate * Gradient * synapse.InputNeuron.Value;
+                synapse.Weight += synapse.WeightDelta + momentum * prevDelta;
+            }
 		}
 		#endregion
 	}
