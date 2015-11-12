@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NeuralNetwork.Classes;
+using NeuralNetwork.Network;
 
 namespace NeuralNetwork
 {
@@ -11,14 +11,14 @@ namespace NeuralNetwork
 		#region -- Constants --
 		private const int MaxEpochs = 5000;
 		private const double MinimumError = 0.01;
-		private const TrainingType TrainingType = Classes.TrainingType.MinimumError;
+		private const TrainingType TrainingType = Network.TrainingType.MinimumError;
 		#endregion
 
 		#region -- Variables --
 		private static int _numInputParameters;
 		private static int _numHiddenLayerNeurons;
 		private static int _numOutputParameters;
-		private static Network _network;
+		private static Network.Network _network;
 		private static List<DataSet> _dataSets; 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace NeuralNetwork
 			}
 
 			Console.WriteLine("Creating Network...");
-			_network = new Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters);
+			_network = new Network.Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters);
 			PrintNewLine();
 		}
 
@@ -244,7 +244,7 @@ namespace NeuralNetwork
 			if (lines.Length < 2)
 			{
 				WriteError("There aren't enough lines in the file.  The first line should have 3 integers representing the number of inputs, the number of hidden neurons and the number of outputs." +
-				           "\r\nThere should also be at least one line of data.");
+						   "\r\nThere should also be at least one line of data.");
 			}
 			else
 			{

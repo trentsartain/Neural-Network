@@ -41,11 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Dataset.cs" />
-    <Compile Include="Classes\Network.cs" />
-    <Compile Include="Classes\Neuron.cs" />
-    <Compile Include="Classes\Sigmoid.cs" />
-    <Compile Include="Classes\Synapse.cs" />
+    <Compile Include="Network\Dataset.cs" />
+    <Compile Include="Network\Network.cs" />
+    <Compile Include="Network\Neuron.cs" />
+    <Compile Include="Network\Sigmoid.cs" />
+    <Compile Include="Network\Synapse.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
