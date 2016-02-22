@@ -19,7 +19,7 @@ namespace NeuralNetwork.Network
 		{
 			InputSynapses = new List<Synapse>();
 			OutputSynapses = new List<Synapse>();
-			Bias = NeuralNetwork.Network.Network.GetRandom();
+			Bias = Network.GetRandom();
 		}
 
 		public Neuron(IEnumerable<Neuron> inputNeurons) : this()

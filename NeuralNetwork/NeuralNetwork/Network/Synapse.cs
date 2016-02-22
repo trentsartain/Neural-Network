@@ -14,7 +14,7 @@
 		{
 			InputNeuron = inputNeuron;
 			OutputNeuron = outputNeuron;
-			Weight = NeuralNetwork.Network.Network.GetRandom();
+			Weight = Network.GetRandom();
 		}
 		#endregion
 	}

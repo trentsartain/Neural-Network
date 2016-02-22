@@ -70,7 +70,7 @@ namespace NeuralNetwork.Network
 			}
 		}
 
-		public void ForwardPropagate(params double[] inputs)
+		private void ForwardPropagate(params double[] inputs)
 		{
 			var i = 0;
 			InputLayer.ForEach(a => a.Value = inputs[i++]);
@@ -78,7 +78,7 @@ namespace NeuralNetwork.Network
 			OutputLayer.ForEach(a => a.CalculateValue());
 		}
 
-		public void BackPropagate(params double[] targets)
+		private void BackPropagate(params double[] targets)
 		{
 			var i = 0;
 			OutputLayer.ForEach(a => a.CalculateGradient(targets[i++]));
@@ -93,7 +93,7 @@ namespace NeuralNetwork.Network
 			return OutputLayer.Select(a => a.Value).ToArray();
 		}
 
-		public double CalculateError(params double[] targets)
+		private double CalculateError(params double[] targets)
 		{
 			var i = 0;
 			return OutputLayer.Sum(a => Math.Abs(a.CalculateError(targets[i++])));
