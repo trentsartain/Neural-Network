@@ -54,13 +54,13 @@ namespace NeuralNetwork
 			while (true)
 			{
 				PrintUnderline(50);
-				var values = GetInputData(string.Format("Type {0} inputs: ", _numInputParameters));
+				var values = GetInputData($"Type {_numInputParameters} inputs: ");
 				var results = _network.Compute(values);
 				PrintNewLine();
 
 				foreach (var result in results)
 				{
-					Console.WriteLine("Output: {0}", result);
+				    Console.WriteLine($"Output: {result}");
 				}
 
 				PrintNewLine();
@@ -68,7 +68,7 @@ namespace NeuralNetwork
 				var convertedResults = new double[results.Length];
 				for (var i = 0; i < results.Length; i++) { convertedResults[i] = results[i] > 0.5 ? 1 : 0; }
 
-				var message = string.Format("Was the result supposed to be {0}? (yes/no/exit)", String.Join(" ", convertedResults));
+				var message = $"Was the result supposed to be {string.Join(" ", convertedResults)}? (yes/no/exit)";
 				if (!GetBool(message))
 				{
 					var offendingDataSet = _dataSets.FirstOrDefault(x => x.Values.SequenceEqual(values) && x.Targets.SequenceEqual(convertedResults));
@@ -161,8 +161,8 @@ namespace NeuralNetwork
 			_dataSets = new List<DataSet>();
 			for (var i = 0; i < 4; i++)
 			{
-				var values = GetInputData(String.Format("Data Set {0}", i + 1));
-				var expectedResult = GetExpectedResult(String.Format("Expected Result for Data Set {0}:", i + 1));
+				var values = GetInputData($"Data Set {i + 1}");
+				var expectedResult = GetExpectedResult($"Expected Result for Data Set {i + 1}:");
 				_dataSets.Add(new DataSet(values, expectedResult));
 			}
 		}
@@ -172,9 +172,9 @@ namespace NeuralNetwork
 			Console.WriteLine(message);
 			var line = GetLine();
 
-			while (line == null || line.Split(' ').Count() != _numInputParameters)
+			while (line == null || line.Split(' ').Length != _numInputParameters)
 			{
-				Console.WriteLine("{0} inputs are required.", _numInputParameters);
+			    Console.WriteLine($"{_numInputParameters} inputs are required.");
 				PrintNewLine();
 				Console.WriteLine(message);
 				line = GetLine();
@@ -185,7 +185,7 @@ namespace NeuralNetwork
 			for(var i = 0; i < lineNums.Length; i++)
 			{
 				double num;
-				if (Double.TryParse(lineNums[i], out num))
+				if (double.TryParse(lineNums[i], out num))
 				{
 					values[i] = num;
 				}
@@ -205,9 +205,9 @@ namespace NeuralNetwork
 			Console.WriteLine(message);
 			var line = GetLine();
 
-			while (line == null || line.Split(' ').Count() != _numOutputParameters)
+			while (line == null || line.Split(' ').Length != _numOutputParameters)
 			{
-				Console.WriteLine("{0} outputs are required.", _numOutputParameters);
+			    Console.WriteLine($"{_numOutputParameters} outputs are required.");
 				PrintNewLine();
 				Console.WriteLine(message);
 				line = GetLine();
@@ -269,14 +269,14 @@ namespace NeuralNetwork
 			{
 				var items = lines[lineIndex].Split(' ');
 				if (items.Length != _numInputParameters + _numOutputParameters)
-					WriteError(String.Format("The data file is malformed.  There were {0} elements on line {1} instead of {2}", items.Length, lineIndex + 1, _numInputParameters + _numOutputParameters));
+					WriteError($"The data file is malformed.  There were {items.Length} elements on line {lineIndex + 1} instead of {_numInputParameters + _numOutputParameters}");
 
 				var values = new double[_numInputParameters];
 				for (var i = 0; i < _numInputParameters; i++)
 				{
 					double num;
 					if (!double.TryParse(items[i], out num))
-						WriteError(String.Format("The data file is malformed.  On line {0}, input parameter {1} is not a valid number.", lineIndex + 1, items[i]));
+						WriteError($"The data file is malformed.  On line {lineIndex + 1}, input parameter {items[i]} is not a valid number.");
 					else
 						values[i] = num;
 				}
@@ -286,7 +286,7 @@ namespace NeuralNetwork
 				{
 					int num;
 					if (!int.TryParse(items[_numInputParameters + i], out num))
-						Console.WriteLine("The data file is malformed.  On line {0}, output paramater {1} is not a valid number.", lineIndex, items[i]);
+					    Console.WriteLine($"The data file is malformed.  On line {lineIndex}, output paramater {items[i]} is not a valid number.");
 					else
 						expectedResults[i] = num;
 				}
@@ -300,7 +300,7 @@ namespace NeuralNetwork
 		private static string GetLine()
 		{
 			var line = Console.ReadLine();
-			return line == null ? string.Empty : line.Trim();
+			return line?.Trim() ?? string.Empty;
 		}
 
 		private static int GetInput(string message, int min)
