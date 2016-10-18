@@ -121,9 +121,7 @@ This is the Neural Network attempting to get as close as possible to the expecte
 What's Next?
 -----
 
-I'm going to continue learning more about Neural Networks.  My understanding of Neural Networks is FAR from complete and I still feel unknowledgeable in many areas.  As I learn about new methods and research, I will consider adding them either to the network or as a sidenote in the readme. 
-
-I have another repository set up to use this same network to learn image recognition. [That can be found here.](http://github.com/trentsartain/Neural-Network-Image-Recognition)
+I'm continuing to learn about neural networks and their applications.  Currently, I'm working on an object-oriented Recurrent Neural Network.  Once that project nears completion, I will put it into a repository and add the link here. 
 
 Code Considerations
 ---
@@ -136,7 +134,7 @@ The Network and its supporting classes are self-contained, meaning that the "UI"
 I forgot that people sometimes want to close their applications via the command line.  When the program starts asking you to verify outputs, you can type "exit" to quit.  I'm a bit tired and will implement a better way to do this in the future. 
 
 #### You Code Funny...
-Hopefully my code is readable and and reusable for you.  I put a lot of effort into maintaining best practices and keeping true to the rules of "Low Coupling and High Cohesion".    It's a learning process and I welcome critique.  
+Hopefully my code is readable and and reusable for you.  I put a lot of effort into maintaining best practices.  It's a learning process and I welcome critique.  
 
 Resources
 -----
