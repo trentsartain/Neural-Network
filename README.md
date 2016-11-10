@@ -6,7 +6,7 @@ If this is your first foray into Neural Networks, welcome!  I hope you enjoy you
 
 This project is my first attempt at creating an application that allows for quick interactions with a basic neural network.  I find that I learn better when I have something quick and easy to tinker with that allows me to analyze pieces of a concept at my own pace.  Hopefully, this will help some of you that learn in a similar manner.
 
-This project is written in C#. 
+This project is written in C# and uses C# 6.0 Syntax.  You will need an environment that is capable of compiling the C# 6.0 syntax in order to use this program. 
 
 ![Alt text](ScreenShot.PNG?raw=true "Optional Title")
 What is a Neural Network?
