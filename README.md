@@ -6,7 +6,7 @@ If this is your first foray into Neural Networks, welcome!  I hope you enjoy you
 
 This project is an attempt at creating an application that allows for quick interactions with a basic neural network. 
 
-This project is written in C#. 
+This project is written in C# and uses C# 6.0 Syntax.  You will need an environment that is capable of compiling the C# 6.0 syntax in order to use this program. 
 
 ![Alt text](ScreenShot.PNG?raw=true "Optional Title")
 
@@ -249,7 +249,7 @@ Feel free to reuse any part of this program.
 The Network and its supporting classes are self-contained, meaning that the "UI" portion of the program only serves to gather the necessary information to instantiate the Network object and its supporting classes.  You could theoretically take the Network and supporting classes and bring it into your own application with little to no modification. The network only requires the number of inputs, number of hidden neurons, the number of outputs and (optionally) a specified learning rate and momentum. 
 
 #### You Code Funny...
-Hopefully my code is readable and and reusable for you.  I put a lot of effort into maintaining best practices and keeping true to the rules of "Low Coupling and High Cohesion".    It's a learning process and I welcome critique.  
+Hopefully my code is readable and and reusable for you.  I put a lot of effort into maintaining best practices.  It's a learning process and I welcome critique.  
 
 Resources
 -----
