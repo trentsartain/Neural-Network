@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NeuralNetwork.Network
+namespace NeuralNetwork.NetworkModels
 {
 	public static class Sigmoid
 	{

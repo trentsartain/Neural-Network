@@ -1,368 +1,498 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using NeuralNetwork.Network;
+using NeuralNetwork.Helpers;
+using NeuralNetwork.NetworkModels;
 
 namespace NeuralNetwork
 {
 	internal class Program
 	{
-		#region -- Constants --
-		private const int MaxEpochs = 5000;
-		private const double MinimumError = 0.01;
-		private const TrainingType TrainingType = Network.TrainingType.MinimumError;
-		#endregion
-
 		#region -- Variables --
 		private static int _numInputParameters;
-		private static int _numHiddenLayerNeurons;
+	    private static int _numHiddenLayers;
+        private static int[] _hiddenNeurons;
 		private static int _numOutputParameters;
-		private static Network.Network _network;
-		private static List<DataSet> _dataSets; 
-		#endregion
+		private static Network _network;
+		private static List<DataSet> _dataSets;
+        #endregion
 
-		#region -- Main --
-		private static void Main()
+        #region -- Main --
+	    [STAThread]
+        private static void Main()
 		{
 			Greet();
-			SetupNetwork();
-			TrainNetwork();
-			VerifyTraining();
+			InitialMenu();
 		}
-		#endregion
+        #endregion
 
-		#region -- Network Training --
-		private static void TrainNetwork()
+	    #region -- Network Setup --
+	    private static void Greet()
+	    {
+	        Console.WriteLine("C# Neural Network Manager");
+	        Console.WriteLine("Created by Trent Sartain (trentsartain on GitHub)");
+	        PrintUnderline(50);
+	        PrintNewLine();
+	    }
+
+	    private static void InitialMenu()
+	    {
+	        Console.WriteLine("Main Menu");
+	        PrintUnderline(50);
+	        Console.WriteLine("\t1. New Network");
+	        Console.WriteLine("\t2. Import Network");
+	        Console.WriteLine("\t3. Exit");
+	        PrintNewLine();
+
+	        switch (GetInput("\tYour Choice: ", 1, 3))
+	        {
+	            case 1:
+	                if (SetupNetwork()) DatasetMenu();
+	                else InitialMenu();
+	                break;
+	            case 2:
+	                ImportNetwork();
+	                DatasetMenu();
+	                break;
+	            case 3:
+	                Exit();
+	                break;
+	        }
+	    }
+
+	    private static void DatasetMenu()
+	    {
+	        Console.WriteLine("Dataset Menu");
+	        PrintUnderline(50);
+	        Console.WriteLine("\t1. Type Dataset");
+	        Console.WriteLine("\t2. Import Dataset");
+	        Console.WriteLine("\t3. Test Network");
+	        Console.WriteLine("\t4. Export Network");
+	        Console.WriteLine("\t5. Main Menu");
+	        Console.WriteLine("\t6. Exit");
+	        PrintNewLine();
+
+	        switch (GetInput("\tYour Choice: ", 1, 6))
+	        {
+	            case 1:
+	                if (GetTrainingData()) NetworkMenu();
+	                else DatasetMenu();
+	                break;
+	            case 2:
+	                ImportDatasets();
+	                NetworkMenu();
+	                break;
+	            case 3:
+	                TestNetwork();
+	                DatasetMenu();
+	                break;
+	            case 4:
+	                ExportNetwork();
+	                DatasetMenu();
+	                break;
+	            case 5:
+	                InitialMenu();
+	                break;
+	            case 6:
+	                Exit();
+	                break;
+	        }
+	    }
+
+	    private static void NetworkMenu()
+	    {
+	        Console.WriteLine("Network Menu");
+	        PrintUnderline(50);
+	        Console.WriteLine("\t1. Train Network");
+	        Console.WriteLine("\t2. Test Network");
+	        Console.WriteLine("\t3. Export Network");
+	        Console.WriteLine("\t4. Export Dataset");
+	        Console.WriteLine("\t5. Dataset Menu");
+	        Console.WriteLine("\t6. Main Menu");
+	        Console.WriteLine("\t7. Exit");
+	        PrintNewLine();
+
+	        switch (GetInput("\tYour Choice: ", 1, 7))
+	        {
+	            case 1:
+	                Train();
+	                NetworkMenu();
+	                break;
+	            case 2:
+	                TestNetwork();
+	                NetworkMenu();
+	                break;
+	            case 3:
+	                ExportNetwork();
+	                NetworkMenu();
+	                break;
+	            case 4:
+	                ExportDatasets();
+	                NetworkMenu();
+	                break;
+	            case 5:
+	                DatasetMenu();
+	                break;
+	            case 6:
+	                InitialMenu();
+	                break;
+	            case 7:
+	                Exit();
+	                break;
+	        }
+	    }
+
+	    private static bool SetupNetwork()
+	    {
+	        PrintNewLine();
+	        Console.WriteLine("Network Setup");
+	        PrintUnderline(50);
+	        SetNumInputParameters();
+	        if (_numInputParameters == 0) return false;
+	        SetNumNeuronsInHiddenLayer();
+	        if (_numHiddenLayers == 0) return false;
+	        SetNumOutputParameters();
+	        if (_numInputParameters == 0) return false;
+
+	        Console.WriteLine("\tCreating Network...");
+	        _network = new Network(_numInputParameters, _hiddenNeurons, _numOutputParameters);
+	        Console.WriteLine("\t**Network Created!**");
+	        PrintNewLine();
+	        return true;
+	    }
+
+	    private static void SetNumInputParameters()
+	    {
+	        Console.WriteLine("\tHow many input parameters will there be? (2 or more)");
+	        _numInputParameters = GetInput("\tInput Parameters: ", 2, int.MaxValue) ?? 0;
+	        PrintNewLine(2);
+	    }
+
+	    private static void SetNumNeuronsInHiddenLayer()
+	    {
+	        Console.WriteLine("\tHow many hidden layers? (1 or more)");
+	        _numHiddenLayers = GetInput("\tHidden Layers: ", 1, int.MaxValue) ?? 0;
+
+	        Console.WriteLine("\tHow many neurons in the hidden layers? (2 or more)");
+	        _hiddenNeurons = GetArrayInput("\tNeurons in layer", 2, _numHiddenLayers);
+	        PrintNewLine(2);
+	    }
+
+	    private static void SetNumOutputParameters()
+	    {
+	        Console.WriteLine("\tHow many output parameters will there be? (1 or more)");
+	        _numOutputParameters = GetInput("\tOutput Parameters: ", 1, int.MaxValue) ?? 0;
+	        PrintNewLine(2);
+	    }
+
+	    private static bool GetTrainingData()
+	    {
+	        PrintUnderline(50);
+	        Console.WriteLine("\tManually Enter the Datasets. Type 'menu' at any time to go back.");
+	        PrintNewLine();
+
+	        var numDataSets = GetInput("\tHow many datasets are you going to enter? ", 1, int.MaxValue);
+
+	        var newDatasets = new List<DataSet>();
+	        for (var i = 0; i < numDataSets; i++)
+	        {
+	            var values = GetInputData($"\tData Set {i + 1}: ");
+	            if (values == null)
+	            {
+	                PrintNewLine();
+	                return false;
+	            }
+
+	            var expectedResult = GetExpectedResult($"\tExpected Result for Data Set {i + 1}: ");
+	            if (expectedResult == null)
+	            {
+	                PrintNewLine();
+	                return false;
+	            }
+
+	            newDatasets.Add(new DataSet(values, expectedResult));
+	        }
+
+	        _dataSets = newDatasets;
+	        PrintNewLine();
+	        return true;
+	    }
+
+	    private static double[] GetInputData(string message)
+	    {
+	        Console.Write(message);
+	        var line = GetLine();
+
+	        if (line.Equals("menu", StringComparison.InvariantCultureIgnoreCase)) return null;
+
+	        while (line == null || line.Split(' ').Length != _numInputParameters)
+	        {
+	            Console.WriteLine($"\t{_numInputParameters} inputs are required.");
+	            PrintNewLine();
+	            Console.WriteLine(message);
+	            line = GetLine();
+	        }
+
+	        var values = new double[_numInputParameters];
+	        var lineNums = line.Split(' ');
+	        for (var i = 0; i < lineNums.Length; i++)
+	        {
+	            double num;
+	            if (double.TryParse(lineNums[i], out num))
+	            {
+	                values[i] = num;
+	            }
+	            else
+	            {
+	                Console.WriteLine("\tYou entered an invalid number.  Try again");
+	                PrintNewLine(2);
+	                return GetInputData(message);
+	            }
+	        }
+
+	        return values;
+	    }
+
+	    private static double[] GetExpectedResult(string message)
+	    {
+	        Console.Write(message);
+	        var line = GetLine();
+
+	        if (line != null && line.Equals("menu", StringComparison.InvariantCultureIgnoreCase)) return null;
+
+	        while (line == null || line.Split(' ').Length != _numOutputParameters)
+	        {
+	            Console.WriteLine($"\t{_numOutputParameters} outputs are required.");
+	            PrintNewLine();
+	            Console.WriteLine(message);
+	            line = GetLine();
+	        }
+
+	        var values = new double[_numOutputParameters];
+	        var lineNums = line.Split(' ');
+	        for (var i = 0; i < lineNums.Length; i++)
+	        {
+	            int num;
+	            if (int.TryParse(lineNums[i], out num) && (num == 0 || num == 1))
+	            {
+	                values[i] = num;
+	            }
+	            else
+	            {
+	                Console.WriteLine("\tYou must enter 1s and 0s!");
+	                PrintNewLine(2);
+	                return GetExpectedResult(message);
+	            }
+	        }
+
+	        return values;
+	    }
+	    #endregion
+
+        #region -- Network Training --
+        private static void TestNetwork()
 		{
-			PrintNewLine();
-			PrintUnderline(50);
-			Console.WriteLine("Training...");
-
-			Train();
-
-			PrintNewLine();
-			Console.WriteLine("Training Complete!");
-			PrintNewLine();
-		}
-
-		private static void VerifyTraining()
-		{
-			Console.WriteLine("Let's test it!");
-			PrintNewLine();
+			Console.WriteLine("\tTesting Network");
+		    Console.WriteLine("\tType 'menu' at any time to return to the previous menu.");
+            PrintNewLine();
 
 			while (true)
 			{
 				PrintUnderline(50);
-				var values = GetInputData($"Type {_numInputParameters} inputs: ");
+				var values = GetInputData($"\tType {_numInputParameters} inputs: ");
+			    if (values == null)
+			    {
+                    PrintNewLine();
+			        return;
+			    }
+
 				var results = _network.Compute(values);
 				PrintNewLine();
 
 				foreach (var result in results)
 				{
-				    Console.WriteLine($"Output: {result}");
+				    Console.WriteLine($"\tOutput: {result}");
 				}
 
 				PrintNewLine();
-
-				var convertedResults = new double[results.Length];
-				for (var i = 0; i < results.Length; i++) { convertedResults[i] = results[i] > 0.5 ? 1 : 0; }
-
-				var message = $"Was the result supposed to be {string.Join(" ", convertedResults)}? (yes/no/exit)";
-				if (!GetBool(message))
-				{
-					var offendingDataSet = _dataSets.FirstOrDefault(x => x.Values.SequenceEqual(values) && x.Targets.SequenceEqual(convertedResults));
-					_dataSets.Remove(offendingDataSet);
-
-					var expectedResults = GetExpectedResult("What were the expected results?");
-					if(!_dataSets.Exists(x => x.Values.SequenceEqual(values) && x.Targets.SequenceEqual(expectedResults)))
-						_dataSets.Add(new DataSet(values, expectedResults));
-
-					PrintNewLine();
-					Console.WriteLine("Retraining Network...");
-					PrintNewLine();
-
-					Train();
-				}
-				else
-				{
-					PrintNewLine();
-					Console.WriteLine("Neat!");
-					Console.WriteLine("Encouraging Network...");
-					PrintNewLine();
-
-					Train();
-				}
 			}
 		}
 
 		private static void Train()
 		{
-			_network.Train(_dataSets, TrainingType == TrainingType.Epoch ? MaxEpochs : MinimumError);
-		}
-		#endregion
-
-		#region -- Network Setup --
-		private static void Greet()
-		{
-			Console.WriteLine("We're going to create an artificial Neural Network!");
-			Console.WriteLine("The network will use back propagation to train itself.");
-			PrintUnderline(50);
-			PrintNewLine();
-		}
-
-		private static void SetupNetwork()
-		{
-			if (GetBool("Do you want to read from the space delimited data.txt file? (yes/no/exit)"))
-			{
-				SetupFromFile();
-			}
-			else
-			{
-				SetNumInputParameters();
-				SetNumNeuronsInHiddenLayer();
-				SetNumOutputParameters();
-				GetTrainingData();
-			}
-
-			Console.WriteLine("Creating Network...");
-			_network = new Network.Network(_numInputParameters, _numHiddenLayerNeurons, _numOutputParameters);
-			PrintNewLine();
-		}
-
-		private static void SetNumInputParameters()
-		{
-			PrintNewLine();
-			Console.WriteLine("How many input parameters will there be? (2 or more)");
-			_numInputParameters = GetInput("Input Parameters: ", 2);
-			PrintNewLine(2);
-		}
-
-		private static void SetNumNeuronsInHiddenLayer()
-		{
-			Console.WriteLine("How many neurons in the hidden layer? (2 or more)");
-			_numHiddenLayerNeurons = GetInput("Neurons: ", 2);
-			PrintNewLine(2);
-		}
-
-		private static void SetNumOutputParameters()
-		{
-			Console.WriteLine("How many output parameters will there be? (1 or more)");
-			_numOutputParameters = GetInput("Output Parameters: ", 1);
-			PrintNewLine(2);
-		}
-
-		private static void GetTrainingData()
-		{
-			PrintUnderline(50);
-			Console.WriteLine("Now, we need some input data.");
-			PrintNewLine();
-
-			_dataSets = new List<DataSet>();
-			for (var i = 0; i < 4; i++)
-			{
-				var values = GetInputData($"Data Set {i + 1}");
-				var expectedResult = GetExpectedResult($"Expected Result for Data Set {i + 1}:");
-				_dataSets.Add(new DataSet(values, expectedResult));
-			}
-		}
-
-		private static double[] GetInputData(string message)
-		{
-			Console.WriteLine(message);
-			var line = GetLine();
-
-			while (line == null || line.Split(' ').Length != _numInputParameters)
-			{
-			    Console.WriteLine($"{_numInputParameters} inputs are required.");
-				PrintNewLine();
-				Console.WriteLine(message);
-				line = GetLine();
-			}
-
-			var values = new double[_numInputParameters];
-			var lineNums = line.Split(' ');
-			for(var i = 0; i < lineNums.Length; i++)
-			{
-				double num;
-				if (double.TryParse(lineNums[i], out num))
-				{
-					values[i] = num;
-				}
-				else
-				{
-					Console.WriteLine("You entered an invalid number.  Try again");
-					PrintNewLine(2);
-					return GetInputData(message);
-				}
-			}
-
-			return values;
-		}
-
-		private static double[] GetExpectedResult(string message)
-		{
-			Console.WriteLine(message);
-			var line = GetLine();
-
-			while (line == null || line.Split(' ').Length != _numOutputParameters)
-			{
-			    Console.WriteLine($"{_numOutputParameters} outputs are required.");
-				PrintNewLine();
-				Console.WriteLine(message);
-				line = GetLine();
-			}
-
-			var values = new double[_numOutputParameters];
-			var lineNums = line.Split(' ');
-			for (var i = 0; i < lineNums.Length; i++)
-			{
-				int num;
-				if (int.TryParse(lineNums[i], out num) && (num == 0 || num == 1))
-				{
-					values[i] = num;
-				}
-				else
-				{
-					Console.WriteLine("You must enter 1s and 0s!");
-					PrintNewLine(2);
-					return GetExpectedResult(message);
-				}
-			}
-
-			return values;
-		}
+            Console.WriteLine("Network Training");
+		    PrintUnderline(50);
+            Console.WriteLine("\t1. Train to minimum error");
+            Console.WriteLine("\t2. Train to max epoch");
+            Console.WriteLine("\t3. Network Menu");
+            PrintNewLine();
+		    switch (GetInput("\tYour Choice: ", 1, 3))
+		    {
+		        case 1:
+		            var minError = GetDouble("\tMinimum Error: ", 0.000000001, 1.0);
+		            PrintNewLine();
+                    Console.WriteLine("\tTraining...");
+		            _network.Train(_dataSets, minError);
+		            Console.WriteLine("\t**Training Complete**");
+		            PrintNewLine();
+                    NetworkMenu();
+		            break;
+		        case 2:
+		            var maxEpoch = GetInput("\tMax Epoch: ", 1, int.MaxValue);
+		            if (!maxEpoch.HasValue)
+		            {
+		                PrintNewLine();
+                        NetworkMenu();
+		                return;
+		            }
+		            PrintNewLine();
+                    Console.WriteLine("\tTraining...");
+		            _network.Train(_dataSets, maxEpoch.Value);
+		            Console.WriteLine("\t**Training Complete**");
+		            PrintNewLine();
+                    break;
+		        case 3:
+		            NetworkMenu();
+		            break;
+		    }
+		    PrintNewLine();
+        }
 		#endregion
 
 		#region -- I/O Help --
-		private static void SetupFromFile()
+		private static void ImportNetwork()
 		{
-			_dataSets = new List<DataSet>();
-			var fileContent = File.ReadAllText("data.txt");
-			var lines = fileContent.Split(new []{Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+		    PrintNewLine();
+            _network = ImportHelper.ImportNetwork();
+		    if (_network == null)
+		    {
+		        WriteError("\t****Something went wrong while importing your network.****");
+		        return;
+		    }
 
-			if (lines.Length < 2)
-			{
-				WriteError("There aren't enough lines in the file.  The first line should have 3 integers representing the number of inputs, the number of hidden neurons and the number of outputs." +
-						   "\r\nThere should also be at least one line of data.");
-			}
-			else
-			{
-				var setupParameters = lines[0].Split(' ');
-				if (setupParameters.Length != 3)
-					WriteError("There aren't enough setup parameters.");
+		    _numInputParameters = _network.InputLayer.Count;
+		    _hiddenNeurons = new int[_network.HiddenLayers.Count];
+		    _numOutputParameters = _network.OutputLayer.Count;
+		    
+            Console.WriteLine("\t**Network successfully imported.**");
+            PrintNewLine();
+        }
 
-				if (!int.TryParse(setupParameters[0], out _numInputParameters) || !int.TryParse(setupParameters[1], out _numHiddenLayerNeurons) || !int.TryParse(setupParameters[2], out _numOutputParameters))
-					WriteError("The setup parameters are malformed.  There must be 3 integers.");
+	    private static void ExportNetwork()
+	    {
+	        PrintNewLine();
+            Console.WriteLine("\tExporting Network...");
+            ExportHelper.ExportNetwork(_network);
+            Console.WriteLine("\t**Exporting Complete!**");
+            PrintNewLine();
+	    }
 
-				if (_numInputParameters < 2)
-					WriteError("The number of input parameters must be greater than or equal to 2.");
+	    private static void ImportDatasets()
+	    {
+	        PrintNewLine();
+            _dataSets = ImportHelper.ImportDatasets();
+	        if (_dataSets == null)
+	        {
+	            WriteError("\t--Something went wrong while importing your datasets.--");
+	            return;
+	        }
 
-				if (_numHiddenLayerNeurons < 2)
-					WriteError("The number of hidden neurons must be greater than or equal to 2.");
+	        if (_dataSets.Any(x => x.Values.Length != _numInputParameters || _dataSets.Any(y => y.Targets.Length != _numOutputParameters)))
+	        {
+	            WriteError($"\t--The dataset does not fit the network.  Network requires datasets that have {_numInputParameters} inputs and {_numOutputParameters} outputs.--");
+	            return;
+            }
 
-				if (_numOutputParameters < 1)
-					WriteError("The number of hidden neurons must be greater than or equal to 1.");
-			}
+	        Console.WriteLine("\t**Datasets successfully imported.**");
+            PrintNewLine();
+        }
 
-			for (var lineIndex = 1; lineIndex < lines.Length; lineIndex++)
-			{
-				var items = lines[lineIndex].Split(' ');
-				if (items.Length != _numInputParameters + _numOutputParameters)
-					WriteError($"The data file is malformed.  There were {items.Length} elements on line {lineIndex + 1} instead of {_numInputParameters + _numOutputParameters}");
+	    private static void ExportDatasets()
+	    {
+	        PrintNewLine();
+            Console.WriteLine("\tExporting Datasets...");
+	        ExportHelper.ExportDatasets(_dataSets);
+	        Console.WriteLine("\t**Exporting Complete!**");
+            PrintNewLine();
+	    }
+        #endregion
 
-				var values = new double[_numInputParameters];
-				for (var i = 0; i < _numInputParameters; i++)
-				{
-					double num;
-					if (!double.TryParse(items[i], out num))
-						WriteError($"The data file is malformed.  On line {lineIndex + 1}, input parameter {items[i]} is not a valid number.");
-					else
-						values[i] = num;
-				}
+        #region -- Console Helpers --
 
-				var expectedResults = new double[_numOutputParameters];
-				for (var i = 0; i < _numOutputParameters; i++)
-				{
-					int num;
-					if (!int.TryParse(items[_numInputParameters + i], out num))
-					    Console.WriteLine($"The data file is malformed.  On line {lineIndex}, output paramater {items[i]} is not a valid number.");
-					else
-						expectedResults[i] = num;
-				}
-				_dataSets.Add(new DataSet(values, expectedResults));
-			}
-		}
-		#endregion
-
-		#region -- Console Helpers --
-
-		private static string GetLine()
+        private static string GetLine()
 		{
 			var line = Console.ReadLine();
 			return line?.Trim() ?? string.Empty;
 		}
 
-		private static int GetInput(string message, int min)
+		private static int? GetInput(string message, int min, int max)
 		{
 			Console.Write(message);
 			var num = GetNumber();
+		    if (!num.HasValue) return null;
 
-			while (num < min)
+			while (!num.HasValue || num < min || num > max)
 			{
 				Console.Write(message);
 				num = GetNumber();
 			}
 
-			return num;
+			return num.Value;
 		}
 
-		private static int GetNumber()
+	    private static double GetDouble(string message, double min, double max)
+	    {
+	        Console.Write(message);
+	        var num = GetDouble();
+
+            while (num < min || num > max)
+	        {
+	            Console.Write(message);
+	            num = GetDouble();
+
+	        }
+
+	        return num;
+	    }
+
+        private static int[] GetArrayInput(string message, int min, int numToGet)
+        {
+            var nums = new int[numToGet];
+
+            for(var i = 0; i < numToGet; i++)
+            {
+                Console.Write(message + " " + (i+1) + ": ");
+                var num = GetNumber();
+
+                while (!num.HasValue || num < min)
+                {
+                    Console.Write(message + " " + (i+1) + ": ");
+                    num = GetNumber();
+                }
+
+                nums[i] = num.Value;
+            }           
+
+            return nums;
+        }
+
+        private static int? GetNumber()
 		{
 			int num;
 			var line = GetLine();
-			return line != null && int.TryParse(line, out num) ? num : 0;
+
+		    if (line.Equals("menu", StringComparison.InvariantCultureIgnoreCase)) return null;
+
+			return int.TryParse(line, out num) ? num : 0;
 		}
 
-		private static bool GetBool(string message)
-		{
-			Console.WriteLine(message);
-			Console.Write("Answer: ");
-			var line = GetLine();
+	    private static double GetDouble()
+	    {
+	        double num;
+	        var line = GetLine();
+	        return line != null && double.TryParse(line, out num) ? num : 0;
+	    }
 
-			bool answer;
-			while (line == null || !TryGetBoolResponse(line.ToLower(), out answer))
-			{
-				if (line == "exit")
-					Environment.Exit(0);
-
-				Console.WriteLine(message);
-				Console.Write("Answer: ");
-				line = GetLine();
-			}
-
-			PrintNewLine();
-			return answer;
-		}
-
-		private static bool TryGetBoolResponse(string line, out bool answer)
-		{
-			answer = false;
-			if (string.IsNullOrEmpty(line)) return false;
-
-			if (bool.TryParse(line, out answer)) return true;
-
-			switch (line[0])
-			{
-				case 'y':
-					answer = true;
-					return true;
-				case 'n':
-					return true;
-			}
-
-			return false;
-		}
 
 		private static void PrintNewLine(int numNewLines = 1)
 		{
@@ -380,9 +510,15 @@ namespace NeuralNetwork
 		private static void WriteError(string error)
 		{
 			Console.WriteLine(error);
-			Console.ReadLine();
-			Environment.Exit(0);
+            Exit();		
 		}
+
+	    private static void Exit()
+	    {
+	        Console.WriteLine("Exiting...");
+	        Console.ReadLine();
+	        Environment.Exit(0);
+        }
 		#endregion
 	}
 }

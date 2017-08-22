@@ -1,4 +1,4 @@
-﻿namespace NeuralNetwork.Network
+﻿namespace NeuralNetwork.NetworkModels
 {
 	public class DataSet
 	{

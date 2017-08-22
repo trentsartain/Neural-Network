@@ -4,11 +4,12 @@ Introduction
 ------------
 If this is your first foray into Neural Networks, welcome!  I hope you enjoy yourself as much as I have.
 
-This project is my first attempt at creating an application that allows for quick interactions with a basic neural network.  I find that I learn better when I have something quick and easy to tinker with that allows me to analyze pieces of a concept at my own pace.  Hopefully, this will help some of you that learn in a similar manner.
+This project is an attempt at creating an application that allows for quick interactions with a basic neural network. 
 
 This project is written in C#. 
 
 ![Alt text](ScreenShot.PNG?raw=true "Optional Title")
+
 What is a Neural Network?
 -----
 Great question!  
@@ -86,44 +87,159 @@ In our case, we are using a [Sigmoid Function](https://en.wikipedia.org/wiki/Sig
 
 How Do I Use this Program?
 ------
+This program is fairly simple to use and is divided into 3 main menus and a couple sub menus.
 
-This program is fairly simple to use.  
+1. Main Menu
+	* New Network - Manually input a network's configuration.
+	* Import Network - Import a network configuration. (See JSON formatting section below)
+	* Exit - Exit the program
+2. Dataset Menu
+	*  Type Dataset - Manually input datasets to be used.
+	*  Import Dataset - Import a Dataset configuration.
+	*  Test Network - Test the current network by typing in inputs.
+	*  Export Network - Export the current network. (See JSON formatting section below)
+	*  Main Menu - Go back to the Main Menu.
+	*  Exit - Exit the program
+3. Network Menu
+	* Train Network - Train the current network based on parameters you give.
+	* Test Network - Test the current network by typing in inputs.
+	* Export Network - Export the current network. (See JSON formatting section below)
+	* Export Dataset - Export the current dataset.
+	* Dataset Menu - Go back to the Dataset Menu.
+	* Main Menu - Go back to the Main Menu.
+	* Exit - Exit the program
 
-When it starts, you will be presented with the option to load the Neural Network configuration from a data file.  The file is currently set up to use the common XOR example.  This means that the network will be initialized with the following:
-* Number of Inputs: 2
-* Number of Hidden Neurons: 10
-* Number of Outputs: 1
 
-Test Data:
-
-| Input A | Input B | Output |
-|:-----:|:---------:|:-----:|
-| 0 | 0 | 0 |
-| 0 | 1 | 1 |
-| 1 | 0 | 1 |
-| 1 | 1 | 0 |
-
-To change the file (data.txt):
-
-1. Make the first line as follows: {{number of inputs}} {{number of hidden neurons}} {{number of outputs}}
-2. Add any number of lines representing your data.  Simply put in your inputs (space delmited) followed by your expected outputs (space delimited).
-
-Alternatively, you can manually type in your own manual configuration and data sets.  There is a fair amount of validation in place to guide you through the process.
-
-Once the data sets are...set... the program will begin training the Neural Network.  The network can be trained by number of epochs or by setting a minimum error.  All of this can be set via the constants in the program.  If minimum error is used, the network will be trained until the error threshold is reached.  If the error threshold can't be reached, the training will stop when the number of epochs run reaches the maximum integer value. 
-
-After the Neural Network is trained, you will be asked to enter input data and verify the output.  If the output is wrong, you can enter the correct output.  The network will then be "retrained".  If the input is correct, the network will be "encouraged".  
-
-If you used the XOR example and gave inputs of 0 and 1, you might see output values like: 0.985902....
-
-This is the Neural Network attempting to get as close as possible to the expected output of 1.  As the network is encouraged, this number will get higher. 
-
-What's Next?
+Suggested Neural Net JSON Formatting Standard
 -----
+As of yet, I haven't seen a standard serialized format for a Neural Network.  In an effort to implement importing and exporting within this program, I wrote a standardized format for the Neural Network so that a network exported from this program could be imported into another one with ease.  I imagine it will change a bit over time, but for now, this seems to work well. It's simple and hopefully transferrable.
 
-I'm going to continue learning more about Neural Networks.  My understanding of Neural Networks is FAR from complete and I still feel unknowledgeable in many areas.  As I learn about new methods and research, I will consider adding them either to the network or as a sidenote in the readme. 
+Here's an example network that has been exported and can be re-imported into this program.  There are examples of this ("NetworkExample.txt") and a serialized Dataset ("DatasetExample.txt") inside of the DataExamples directory.
+```javascript
+{
+  "LearnRate": 0.4,
+  "Momentum": 0.9,
+  "InputLayer": [
+    {
+      "Id": "f1fea97c-48ba-4e1b-b7eb-fe9d1897758c",
+      "Bias": 0.88011651853104889,
+      "BiasDelta": 0.0,
+      "Gradient": 0.0,
+      "Value": 0.0
+    },
+    {
+      "Id": "fcf15808-fb11-4a04-9022-638140164c64",
+      "Bias": -0.12904600665394495,
+      "BiasDelta": 0.0,
+      "Gradient": 0.0,
+      "Value": 0.0
+    }
+  ],
+  "HiddenLayers": [
+    [
+      {
+        "Id": "2cc0c76b-1c40-4c72-803f-97c0997bcc07",
+        "Bias": 1.6459098726963641,
+        "BiasDelta": 6.8129688749504508E-06,
+        "Gradient": 1.7032422187376126E-05,
+        "Value": 0.83833657457730759
+      },
+      {
+        "Id": "aeacc65b-101d-4a94-b9cc-ab008a36dfee",
+        "Bias": -1.3229172632409467,
+        "BiasDelta": -9.2984227388283447E-06,
+        "Gradient": -2.3246056847070861E-05,
+        "Value": 0.21033426055222876
+      },
+      {
+        "Id": "fda1a91b-cb45-4fb0-9d58-b3571ef88777",
+        "Bias": -0.43095589580981947,
+        "BiasDelta": 1.2014607576953927E-05,
+        "Gradient": 3.0036518942384814E-05,
+        "Value": 0.39389960849056194
+      }
+    ]
+  ],
+  "OutputLayer": [
+    {
+      "Id": "9c096f95-800c-435b-9ee9-5af125abc8b3",
+      "Bias": 3.8785304867945971,
+      "BiasDelta": -5.2888861198121289E-06,
+      "Gradient": -1.3222215299530321E-05,
+      "Value": 0.0036428777527120928
+    }
+  ],
+  "Synapses": [
+    {
+      "Id": "3c0e0f3f-beea-4754-af3d-4d00dca4c177",
+      "OutputNeuronId": "2cc0c76b-1c40-4c72-803f-97c0997bcc07",
+      "InputNeuronId": "f1fea97c-48ba-4e1b-b7eb-fe9d1897758c",
+      "Weight": -4.9046816226955494,
+      "WeightDelta": 0.0
+    },
+    {
+      "Id": "201ac151-36b6-403d-a543-d77c0076e99f",
+      "OutputNeuronId": "aeacc65b-101d-4a94-b9cc-ab008a36dfee",
+      "InputNeuronId": "f1fea97c-48ba-4e1b-b7eb-fe9d1897758c",
+      "Weight": 5.85326693338921,
+      "WeightDelta": 0.0
+    },
+    {
+      "Id": "b211a3a2-6deb-4411-8d51-2b47e22c4a10",
+      "OutputNeuronId": "fda1a91b-cb45-4fb0-9d58-b3571ef88777",
+      "InputNeuronId": "f1fea97c-48ba-4e1b-b7eb-fe9d1897758c",
+      "Weight": 7.1642632394746659,
+      "WeightDelta": 0.0
+    },
+    {
+      "Id": "12caa1a0-cadd-4996-bef8-0ac8d0b84768",
+      "OutputNeuronId": "2cc0c76b-1c40-4c72-803f-97c0997bcc07",
+      "InputNeuronId": "fcf15808-fb11-4a04-9022-638140164c64",
+      "Weight": 7.4919359894962705,
+      "WeightDelta": 0.0
+    },
+    {
+      "Id": "6469fb62-f273-4940-9eb2-b62323a1af0d",
+      "OutputNeuronId": "aeacc65b-101d-4a94-b9cc-ab008a36dfee",
+      "InputNeuronId": "fcf15808-fb11-4a04-9022-638140164c64",
+      "Weight": 6.1679853662708544,
+      "WeightDelta": 0.0
+    },
+    {
+      "Id": "ac471b71-9850-4e16-acbb-bb650aa57de3",
+      "OutputNeuronId": "fda1a91b-cb45-4fb0-9d58-b3571ef88777",
+      "InputNeuronId": "fcf15808-fb11-4a04-9022-638140164c64",
+      "Weight": -2.6579877134228087,
+      "WeightDelta": 0.0
+    },
+    {
+      "Id": "d1610867-c424-4588-a2d9-fdfea8135bb3",
+      "OutputNeuronId": "9c096f95-800c-435b-9ee9-5af125abc8b3",
+      "InputNeuronId": "2cc0c76b-1c40-4c72-803f-97c0997bcc07",
+      "Weight": -9.5047366120987249,
+      "WeightDelta": -4.4338666730127679E-06
+    },
+    {
+      "Id": "4ca55472-aaa0-421c-993d-7e6b40ceb2a6",
+      "OutputNeuronId": "9c096f95-800c-435b-9ee9-5af125abc8b3",
+      "InputNeuronId": "aeacc65b-101d-4a94-b9cc-ab008a36dfee",
+      "Weight": 10.58506658726629,
+      "WeightDelta": -1.1124339511556304E-06
+    },
+    {
+      "Id": "ab233d80-e39a-4033-bba1-afbc96696cef",
+      "OutputNeuronId": "9c096f95-800c-435b-9ee9-5af125abc8b3",
+      "InputNeuronId": "fda1a91b-cb45-4fb0-9d58-b3571ef88777",
+      "Weight": -9.5151417793873545,
+      "WeightDelta": -2.0832901719451647E-06
+    }
+  ]
+}
+```
 
-I have another repository set up to use this same network to learn image recognition. [That can be found here.](http://github.com/trentsartain/Neural-Network-Image-Recognition)
+What's Next? 
+---
+I'm not a fan of the current menu system, so that will probably be next along with a bunch of error handling. 
 
 Code Considerations
 ---
@@ -131,9 +247,6 @@ Feel free to reuse any part of this program.
 
 #### Reusability
 The Network and its supporting classes are self-contained, meaning that the "UI" portion of the program only serves to gather the necessary information to instantiate the Network object and its supporting classes.  You could theoretically take the Network and supporting classes and bring it into your own application with little to no modification. The network only requires the number of inputs, number of hidden neurons, the number of outputs and (optionally) a specified learning rate and momentum. 
-
-#### How do I Exit?
-I forgot that people sometimes want to close their applications via the command line.  When the program starts asking you to verify outputs, you can type "exit" to quit.  I'm a bit tired and will implement a better way to do this in the future. 
 
 #### You Code Funny...
 Hopefully my code is readable and and reusable for you.  I put a lot of effort into maintaining best practices and keeping true to the rules of "Low Coupling and High Cohesion".    It's a learning process and I welcome critique.  
