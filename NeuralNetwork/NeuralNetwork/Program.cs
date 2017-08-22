@@ -299,7 +299,7 @@ namespace NeuralNetwork
 			while (true)
 			{
 				PrintUnderline(50);
-				var values = GetInputData($"\tType {_numInputParameters} inputs: ");
+				var values = GetInputData($"\tType {_numInputParameters} inputs (or 'menu' to exit): ");
 			    if (values == null)
 			    {
                     PrintNewLine();
