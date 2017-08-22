@@ -105,8 +105,8 @@ namespace NeuralNetwork.NetworkModels
 		{
 			var i = 0;
 			OutputLayer.ForEach(a => a.CalculateGradient(targets[i++]));
-			HiddenLayers.ForEach(a => a.ForEach(b => b.CalculateGradient()));
-			HiddenLayers.ForEach(a => a.ForEach(b => b.UpdateWeights(LearnRate, Momentum)));
+			HiddenLayers.AsEnumerable().Reverse().ToList().ForEach(a => a.ForEach(b => b.CalculateGradient()));
+			HiddenLayers.AsEnumerable().Reverse().ToList().ForEach(a => a.ForEach(b => b.UpdateWeights(LearnRate, Momentum)));
 			OutputLayer.ForEach(a => a.UpdateWeights(LearnRate, Momentum));
 		}
 
