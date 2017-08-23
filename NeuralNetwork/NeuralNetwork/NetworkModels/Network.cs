@@ -45,15 +45,12 @@ namespace NeuralNetwork.NetworkModels
 
 			HiddenLayers.Add(firstHiddenLayer);
 
-			if (hiddenSizes.Length > 1)
+			for (var i = 1; i < hiddenSizes.Length; i++)
 			{
-				for (var i = 1; i < hiddenSizes.Length; i++)
-				{
-					var hiddenLayer = new List<Neuron>();
-					for (var j = 0; j < hiddenSizes[i]; j++)
-						hiddenLayer.Add(new Neuron(HiddenLayers[i - 1]));
-					HiddenLayers.Add(hiddenLayer);
-				}
+				var hiddenLayer = new List<Neuron>();
+				for (var j = 0; j < hiddenSizes[i]; j++)
+					hiddenLayer.Add(new Neuron(HiddenLayers[i - 1]));
+				HiddenLayers.Add(hiddenLayer);
 			}
 
 			for (var i = 0; i < outputSize; i++)
