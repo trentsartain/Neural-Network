@@ -243,7 +243,7 @@ I'm not a fan of the current menu system, so that will probably be next along wi
 
 Code Considerations
 ---
-Feel free to reuse any part of this program.  
+This project is licensed under the terms of the MIT license.
 
 #### Reusability
 The Network and its supporting classes are self-contained, meaning that the "UI" portion of the program only serves to gather the necessary information to instantiate the Network object and its supporting classes.  You could theoretically take the Network and supporting classes and bring it into your own application with little to no modification. The network only requires the number of inputs, number of hidden neurons, the number of outputs and (optionally) a specified learning rate and momentum. 
