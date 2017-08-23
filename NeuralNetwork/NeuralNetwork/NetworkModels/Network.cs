@@ -19,14 +19,14 @@ namespace NeuralNetwork.NetworkModels
 		#endregion
 
 		#region -- Constructor --
-        public Network()
-        {
-            LearnRate = 0;
-            Momentum = 0;
-            InputLayer = new List<Neuron>();
-            HiddenLayers = new List<List<Neuron>>();
-            OutputLayer = new List<Neuron>();
-        }
+		public Network()
+		{
+			LearnRate = 0;
+			Momentum = 0;
+			InputLayer = new List<Neuron>();
+			HiddenLayers = new List<List<Neuron>>();
+			OutputLayer = new List<Neuron>();
+		}
 
 		public Network(int inputSize, int[] hiddenSizes, int outputSize, double? learnRate = null, double? momentum = null)
 		{
@@ -39,22 +39,22 @@ namespace NeuralNetwork.NetworkModels
 			for (var i = 0; i < inputSize; i++)
 				InputLayer.Add(new Neuron());
 
-            var firstHiddenLayer = new List<Neuron>();
-            for (var i = 0; i < hiddenSizes[0]; i++)
-                firstHiddenLayer.Add(new Neuron(InputLayer));
+			var firstHiddenLayer = new List<Neuron>();
+			for (var i = 0; i < hiddenSizes[0]; i++)
+				firstHiddenLayer.Add(new Neuron(InputLayer));
 
-            HiddenLayers.Add(firstHiddenLayer);
+			HiddenLayers.Add(firstHiddenLayer);
 
-            if(hiddenSizes.Length > 1)
-            {
-                for (var i = 1; i < hiddenSizes.Length; i++)
-                {
-                    var hiddenLayer = new List<Neuron>();
-                    for (var j = 0; j < hiddenSizes[i]; j++)
-                        hiddenLayer.Add(new Neuron(HiddenLayers[i-1]));
-                    HiddenLayers.Add(hiddenLayer);
-                }                    
-            }           
+			if (hiddenSizes.Length > 1)
+			{
+				for (var i = 1; i < hiddenSizes.Length; i++)
+				{
+					var hiddenLayer = new List<Neuron>();
+					for (var j = 0; j < hiddenSizes[i]; j++)
+						hiddenLayer.Add(new Neuron(HiddenLayers[i - 1]));
+					HiddenLayers.Add(hiddenLayer);
+				}
+			}
 
 			for (var i = 0; i < outputSize; i++)
 				OutputLayer.Add(new Neuron(HiddenLayers.Last()));

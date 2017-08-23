@@ -7,7 +7,7 @@ namespace NeuralNetwork.NetworkModels
 	public class Neuron
 	{
 		#region -- Properties --
-        public Guid Id { get; set; }
+		public Guid Id { get; set; }
 		public List<Synapse> InputSynapses { get; set; }
 		public List<Synapse> OutputSynapses { get; set; }
 		public double Bias { get; set; }
@@ -19,7 +19,7 @@ namespace NeuralNetwork.NetworkModels
 		#region -- Constructors --
 		public Neuron()
 		{
-            Id = Guid.NewGuid();
+			Id = Guid.NewGuid();
 			InputSynapses = new List<Synapse>();
 			OutputSynapses = new List<Synapse>();
 			Bias = Network.GetRandom();
@@ -49,7 +49,7 @@ namespace NeuralNetwork.NetworkModels
 
 		public double CalculateGradient(double? target = null)
 		{
-			if(target == null)
+			if (target == null)
 				return Gradient = OutputSynapses.Sum(a => a.OutputNeuron.Gradient * a.Weight) * Sigmoid.Derivative(Value);
 
 			return Gradient = CalculateError(target.Value) * Sigmoid.Derivative(Value);
