@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NeuralNetwork.NetworkModels
 {
@@ -9,6 +10,7 @@ namespace NeuralNetwork.NetworkModels
 		#region -- Properties --
 		public double LearnRate { get; set; }
 		public double Momentum { get; set; }
+		public bool UseMultipleThread { get; set; }
 		public List<Neuron> InputLayer { get; set; }
 		public List<List<Neuron>> HiddenLayers { get; set; }
 		public List<Neuron> OutputLayer { get; set; }
@@ -21,6 +23,7 @@ namespace NeuralNetwork.NetworkModels
 		#region -- Constructor --
 		public Network()
 		{
+			UseMultipleThread = true;
 			LearnRate = 0;
 			Momentum = 0;
 			InputLayer = new List<Neuron>();
@@ -28,8 +31,9 @@ namespace NeuralNetwork.NetworkModels
 			OutputLayer = new List<Neuron>();
 		}
 
-		public Network(int inputSize, int[] hiddenSizes, int outputSize, double? learnRate = null, double? momentum = null)
+		public Network(int inputSize, int[] hiddenSizes, int outputSize, double? learnRate = null, double? momentum = null, bool useMultipleThread = true)
 		{
+			UseMultipleThread = useMultipleThread;
 			LearnRate = learnRate ?? .4;
 			Momentum = momentum ?? .9;
 			InputLayer = new List<Neuron>();
@@ -94,7 +98,30 @@ namespace NeuralNetwork.NetworkModels
 		{
 			var i = 0;
 			InputLayer.ForEach(a => a.Value = inputs[i++]);
-			HiddenLayers.ForEach(a => a.ForEach(b => b.CalculateValue()));
+
+			if (UseMultipleThread)
+			{
+				HiddenLayers.ForEach(a =>
+				{
+					var maxDegreeOfParallelism = Environment.ProcessorCount;
+					Parallel.For(0, maxDegreeOfParallelism, new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism }, (index) =>
+					{
+						for (int j = 0; j < a.Count; j++)
+						{
+							if (j % maxDegreeOfParallelism == index)
+							{
+								var b = a[j];
+								b.CalculateValue();
+							}
+						}
+					});
+				});
+			}
+			else
+			{
+				HiddenLayers.ForEach(a => a.ForEach(b => b.CalculateValue()));
+			}
+
 			OutputLayer.ForEach(a => a.CalculateValue());
 		}
 
@@ -104,7 +131,30 @@ namespace NeuralNetwork.NetworkModels
 			OutputLayer.ForEach(a => a.CalculateGradient(targets[i++]));
 			HiddenLayers.Reverse();
 			HiddenLayers.ForEach(a => a.ForEach(b => b.CalculateGradient()));
-			HiddenLayers.ForEach(a => a.ForEach(b => b.UpdateWeights(LearnRate, Momentum)));
+
+			if (UseMultipleThread)
+			{
+				HiddenLayers.ForEach(a =>
+				{
+					var maxDegreeOfParallelism = Environment.ProcessorCount;
+					Parallel.For(0, maxDegreeOfParallelism, new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism }, (index) =>
+					{
+						for (int j = 0; j < a.Count; j++)
+						{
+							if (j % maxDegreeOfParallelism == index)
+							{
+								var b = a[j];
+								b.UpdateWeights(LearnRate, Momentum);
+							}
+						}
+					});
+				});
+			}
+			else
+			{
+				HiddenLayers.ForEach(a => a.ForEach(b => b.UpdateWeights(LearnRate, Momentum)));
+			}
+
 			HiddenLayers.Reverse();
 			OutputLayer.ForEach(a => a.UpdateWeights(LearnRate, Momentum));
 		}
