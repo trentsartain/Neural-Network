@@ -152,7 +152,7 @@ namespace NeuralNetwork
 			SetNumNeuronsInHiddenLayer();
 			if (_numHiddenLayers == 0) return false;
 			SetNumOutputParameters();
-			if (_numInputParameters == 0) return false;
+			if (_numOutputParameters == 0) return false;
 
 			Console.WriteLine("\tCreating Network...");
 			_network = new Network(_numInputParameters, _hiddenNeurons, _numOutputParameters);
